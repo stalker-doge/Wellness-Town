@@ -6,7 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SphereComponent.h"
 #include "UE_Wellness_Town/Interfaces/Interactable.h"
-#include "UE_Wellness_Town/Characters/PlayerMovementComponent.h"
+#include "UE_Wellness_Town/Characters/Player/PlayerMovementComponent.h"
 #include "UE_Wellness_Town/Objects/MoveableActor.h"
 
 // Sets default values

@@ -19,7 +19,7 @@ ATestInteractable::ATestInteractable()
 
 void ATestInteractable::Interact(TObjectPtr<APlayerCharacter> player)
 {
-	GEngine->AddOnScreenDebugMessage(3, 10, FColor::Green, FString::Printf(TEXT("Interacted With: %s"), *GetName()));
+	GEngine->AddOnScreenDebugMessage(4, 10, FColor::Green, FString::Printf(TEXT("Interacted With: %s"), *GetName()));
 }
 
 // Called when the game starts or when spawned
