@@ -4,6 +4,9 @@
 #include "MoveableActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
+#include "UE_Wellness_Town/Characters/Player/PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "Runtime/AnimGraphRuntime/Public/KismetAnimationLibrary.h"
 
 // Sets default values
 AMoveableActor::AMoveableActor()
@@ -30,10 +33,49 @@ AMoveableActor::AMoveableActor()
 	Tags.Add("movable");
 }
 
-void AMoveableActor::AddForce(TObjectPtr<AActor> target)
+void AMoveableActor::AddForce(TObjectPtr<APlayerCharacter> target)
 {
-	FVector direction = GetActorLocation() - target->GetActorLocation();
+	float playerDir = UKismetAnimationLibrary::CalculateDirection(target->GetVelocity(), target->GetActorRotation());
 
-	_meshComponent->AddImpulse(-direction * 600);
+	FVector direction = GetActorLocation() - target->GetActorLocation();
+	float dirX = direction.X;
+	float dirY = direction.Y;
+
+	direction.Normalize();
+
+	float dot = FMath::Abs(GetActorForwardVector().Dot(direction));
+
+	float speed = target->GetMaxSpeed();
+
+	if (dot > 0.5)
+	{
+		GEngine->AddOnScreenDebugMessage(6, 10, FColor::Red, FString::Printf(TEXT("X: %f"), dirX));
+		GEngine->AddOnScreenDebugMessage(7, 10, FColor::Red, FString::Printf(TEXT("PlayerDirection: %f"), playerDir));
+		if (dirX < -180 && playerDir < -100)
+		{
+			_meshComponent->AddImpulse(target->GetVelocity() * speed);
+			return;
+		}
+
+		if (dirX > 180 && playerDir > 100)
+		{
+			_meshComponent->AddImpulse(target->GetVelocity() * speed);
+			return;
+		}
+	}
+	else
+	{
+		if (dirY < -180 && playerDir > 100)
+		{
+			_meshComponent->AddImpulse(target->GetVelocity() * speed);
+			return;
+		}
+
+		if (dirY > 180 && playerDir < -100)
+		{
+			_meshComponent->AddImpulse(target->GetVelocity() * speed);
+			return;
+		}
+	}
 }
 

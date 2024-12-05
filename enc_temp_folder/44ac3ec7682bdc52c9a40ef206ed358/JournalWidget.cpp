@@ -93,16 +93,12 @@ void UJournalWidget::UpdatePage()
 				{
 				case 0:
 					_like1_1->SetText(FText::FromString(check[i]));
-					break;
 				case 1:
 					_like2_1->SetText(FText::FromString(check[i]));
-					break;
 				case 2:
 					_like3_1->SetText(FText::FromString(check[i]));
-					break;
 				case 3:
 					_like4_1->SetText(FText::FromString(check[i]));
-					break;
 				}
 			}
 
@@ -114,16 +110,12 @@ void UJournalWidget::UpdatePage()
 				{
 				case 0:
 					_dislike1_1->SetText(FText::FromString(check[i]));
-					break;
 				case 1:
 					_dislike2_1->SetText(FText::FromString(check[i]));
-					break;
 				case 2:
 					_dislike3_1->SetText(FText::FromString(check[i]));
-					break;
 				case 3:
 					_dislike4_1->SetText(FText::FromString(check[i]));
-					break;
 				}
 			}
 		}
@@ -145,16 +137,12 @@ void UJournalWidget::UpdatePage()
 				{
 				case 0:
 					_like1_2->SetText(FText::FromString(check[i]));
-					break;
 				case 1:
 					_like2_2->SetText(FText::FromString(check[i]));
-					break;
 				case 2:
 					_like3_2->SetText(FText::FromString(check[i]));
-					break;
 				case 3:
 					_like4_2->SetText(FText::FromString(check[i]));
-					break;
 				}
 			}
 
@@ -166,16 +154,12 @@ void UJournalWidget::UpdatePage()
 				{
 				case 0:
 					_dislike1_2->SetText(FText::FromString(check[i]));
-					break;
 				case 1:
 					_dislike2_2->SetText(FText::FromString(check[i]));
-					break;
 				case 2:
 					_dislike3_2->SetText(FText::FromString(check[i]));
-					break;
 				case 3:
 					_dislike4_2->SetText(FText::FromString(check[i]));
-					break;
 				}
 			}
 		}
