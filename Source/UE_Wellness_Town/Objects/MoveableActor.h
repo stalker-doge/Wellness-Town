@@ -8,6 +8,7 @@
 
 class UPhysicsConstraintComponent;
 class UStaticMeshComponent;
+class APlayerCharacter; 
 
 UCLASS()
 class UE_WELLNESS_TOWN_API AMoveableActor : public AActor
@@ -18,7 +19,7 @@ public:
 	// Sets default values for this actor's properties
 	AMoveableActor();
 
-	void AddForce(TObjectPtr<AActor> target);
+	void AddForce(TObjectPtr<APlayerCharacter> target);
 private:
 	UPROPERTY(EditAnywhere, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> _meshComponent;

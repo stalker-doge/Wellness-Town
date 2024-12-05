@@ -81,6 +81,11 @@ bool UPlayerMovementComponent::IsWalk() const
 #pragma region "Pushing"
 bool UPlayerMovementComponent::CanPush()
 {
+	if (_player->IsAltInteracting == false)
+	{
+		//return false;
+	}
+
 	// check if the character is on walkable floor
 	FFindFloorResult FloorResult;
 	FindFloor(UpdatedComponent->GetComponentLocation(), FloorResult, false);
@@ -128,7 +133,6 @@ void UPlayerMovementComponent::TryPushing()
 	if (_isPushing == false)
 	{
 		return;
-
 	}
 
 	// change capsule size to pushing dimensions

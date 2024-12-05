@@ -6,7 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SphereComponent.h"
 #include "UE_Wellness_Town/Interfaces/Interactable.h"
-#include "UE_Wellness_Town/Characters/PlayerMovementComponent.h"
+#include "UE_Wellness_Town/Characters/Player/PlayerMovementComponent.h"
 #include "UE_Wellness_Town/Objects/MoveableActor.h"
 
 // Sets default values
@@ -43,6 +43,13 @@ TObjectPtr<UCameraComponent> APlayerCharacter::GetCamera()
 
 void APlayerCharacter::Interact()
 {
+	if (IsAltInteracting == true)
+	{
+		_movementComponent->bOrientRotationToMovement = true;
+		IsAltInteracting = false;
+		return;
+	}
+
 	if (_currentInteractTarget == nullptr)
 	{
 		return;
@@ -65,11 +72,17 @@ void APlayerCharacter::AltInteract()
 		return;
 	}
 
-	FRotator newRotation = (_movementComponent->IsPushingActor()->GetActorLocation() - GetActorLocation()).Rotation();
-	SetActorRotation(newRotation);
+	IsAltInteracting = true;
 
+	_movementComponent->bOrientRotationToMovement = false;
 	_movementComponent->IsPushingActor()->AddForce(this);
 }
+
+float APlayerCharacter::GetMaxSpeed()
+{
+	return _movementComponent->MaxWalkSpeed;
+}
+
 
 void APlayerCharacter::BeginInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
