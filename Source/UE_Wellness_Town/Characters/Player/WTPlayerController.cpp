@@ -37,6 +37,21 @@ void AWTPlayerController::HandleAltInteract()
 	_playerCharacter->AltInteract();
 }
 
+void AWTPlayerController::HandleDrop()
+{
+	_playerCharacter->DropHeldItem();
+}
+
+void AWTPlayerController::HandleThrow()
+{
+	_playerCharacter->ThrowHeldItem();
+}
+
+void AWTPlayerController::HandleThrowHold()
+{
+	_playerCharacter->IsReadyToThrow();
+}
+
 void AWTPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
@@ -103,5 +118,32 @@ void AWTPlayerController::BindActions(UEnhancedInputComponent* inputComponent)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Jump Action"));
+	}
+
+	if (actionDrop != nullptr)
+	{
+		inputComponent->BindAction(actionDrop, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleDrop);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Drop Action"));
+	}
+
+	if (actionThrow != nullptr)
+	{
+		inputComponent->BindAction(actionThrow, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleThrow);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Throw Action"));
+	}
+
+	if (actionThrowHold != nullptr)
+	{
+		inputComponent->BindAction(actionThrowHold, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleThrowHold);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Throw Hold Action"));
 	}
 }

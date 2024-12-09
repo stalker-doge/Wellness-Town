@@ -23,6 +23,9 @@ protected:
 	void HandleJump();
 	void HandleInteract();
 	void HandleAltInteract();
+	void HandleDrop();
+	void HandleThrow();
+	void HandleThrowHold();
 
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void OnUnPossess() override;
@@ -45,6 +48,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Character Actions")
 	TObjectPtr<UInputAction> actionAltInteract;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Character Actions")
+	TObjectPtr<UInputAction> actionDrop;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Character Actions")
+	TObjectPtr<UInputAction> actionThrow;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Character Actions")
+	TObjectPtr<UInputAction> actionThrowHold;
 
 private:
 	UPROPERTY()
