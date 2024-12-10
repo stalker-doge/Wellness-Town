@@ -28,7 +28,7 @@ void AJournal::Init(UNPC_Manager* npcmanager)
 
 	//Creates the journal widget and hides it
 	_journalWidget = CreateWidget<UJournalWidget>(GetWorld()->GetFirstPlayerController<APlayerController>(), _journalWidgetDefault);
-	_journalWidget->RemoveFromViewport();
+	_journalWidget->RemoveFromParent();
 
 	//Assigns the maxpage based on the total NPC_Data in the world. If the total is odd, the max page is incremented by one (as one side of the page will be needed)
 	_maxPage = _npcManager->GetNPCData().Num();
