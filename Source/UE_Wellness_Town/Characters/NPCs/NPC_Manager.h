@@ -16,8 +16,8 @@ class UE_WELLNESS_TOWN_API UNPC_Manager : public UObject
 public:
 	UNPC_Manager();
 
-	void PopulateNPCData(TObjectPtr<UWorld> world);
-	TArray<TObjectPtr<UNPC_Data>> GetNPCData();
+	void PopulateNPCData(UWorld* world);
+	TArray<UNPC_Data*> GetNPCData();
 
 private:
 	UPROPERTY()

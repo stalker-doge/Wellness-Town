@@ -37,6 +37,31 @@ void AWTPlayerController::HandleAltInteract()
 	_playerCharacter->AltInteract();
 }
 
+void AWTPlayerController::HandleDrop()
+{
+	_playerCharacter->DropHeldItem();
+}
+
+void AWTPlayerController::HandleCast()
+{
+	_playerCharacter->CastHeldItem();
+}
+
+void AWTPlayerController::HandleCastHold()
+{
+	_playerCharacter->IsReadyToCast();
+}
+
+void AWTPlayerController::HandleThrow()
+{
+	_playerCharacter->ThrowHeldItem();
+}
+
+void AWTPlayerController::HandleThrowHold()
+{
+	_playerCharacter->IsReadyToThrow();
+}
+
 void AWTPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
@@ -69,39 +94,30 @@ void AWTPlayerController::OnUnPossess()
 
 void AWTPlayerController::BindActions(UEnhancedInputComponent* inputComponent)
 {
-	if (actionMove != nullptr)
-	{
-		inputComponent->BindAction(actionMove, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleMove);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Move Action"));
-	}
+	checkf(actionMove, TEXT("Missing Move Action"));
+	inputComponent->BindAction(actionMove, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleMove);
 
-	if (actionInteract != nullptr)
-	{
-		inputComponent->BindAction(actionInteract, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleInteract);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Interact Action"));
-	}
+	checkf(actionInteract, TEXT("Missing Interact Action"));
+	inputComponent->BindAction(actionInteract, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleInteract);
 
-	if (actionAltInteract != nullptr)
-	{
-		inputComponent->BindAction(actionAltInteract, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleAltInteract);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Interact Action"));
-	}
+	checkf(actionAltInteract, TEXT("Missing AltInteract Action"));
+	inputComponent->BindAction(actionAltInteract, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleAltInteract);
 
-	if (actionJump != nullptr)
-	{
-		inputComponent->BindAction(actionJump, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleJump);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Jump Action"));
-	}
+	checkf(actionJump, TEXT("Missing Jump Action"));
+	inputComponent->BindAction(actionJump, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleJump);
+
+	checkf(actionDrop, TEXT("Missing Drop Action"));
+	inputComponent->BindAction(actionDrop, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleDrop);
+
+	checkf(actionThrow, TEXT("Missing Throw Action"));
+	inputComponent->BindAction(actionThrow, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleThrow);
+
+	checkf(actionThrowHold, TEXT("Missing ThrowHold Action"));
+	inputComponent->BindAction(actionThrowHold, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleThrowHold);
+
+	checkf(actionCast, TEXT("Missing Cast Action"));
+	inputComponent->BindAction(actionCast, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleCast);
+
+	checkf(actionCastHold, TEXT("Missing CastHold Action"));
+	inputComponent->BindAction(actionCastHold, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleCastHold);
 }

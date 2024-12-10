@@ -5,7 +5,7 @@
 #include "UE_Wellness_Town/Characters/NPCs/NPC_Data.h"
 #include "UMG.h"
 
-void UJournalWidget::Init(TArray<TObjectPtr<UNPC_Data>> data)
+void UJournalWidget::Init(TArray<UNPC_Data*> data)
 {
 	index = 2;
 

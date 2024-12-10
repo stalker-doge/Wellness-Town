@@ -10,7 +10,8 @@ UDialogueSystem::UDialogueSystem()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+
+
 }
 
 
@@ -18,9 +19,8 @@ UDialogueSystem::UDialogueSystem()
 void UDialogueSystem::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
 	
+
 }
 
 
@@ -29,6 +29,66 @@ void UDialogueSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
 }
 
+void UDialogueSystem::StartDialogue()
+{
+	//sets the index to 0
+	DialogueIndex = 0;
+	//calls the event
+	OnDialogueStart();
+	//loads the first line of dialogue
+	DialogueText = DialogueSpeakerLines[DialogueIndex];
+	//increments the index
+	DialogueIndex++;
+
+}
+
+void UDialogueSystem::NextLine()
+{
+	//loads the next line of dialogue
+	DialogueText = DialogueSpeakerLines[DialogueIndex];
+	//increments the index
+	DialogueIndex++;
+	//calls the event
+	OnNextLine();
+
+}
+
+void UDialogueSystem::PlayerDialogue(int32 Option)
+{
+	//sets the player dialogue text to the option selected
+	PlayerDialogueText = DialogueOptions[Option];
+	//calls the event
+	OnPlayerDialogue();
+	//calls the event
+	OnDialogueOptions();
+	//calls the event
+	OnNextLine();
+
+}
+
+void UDialogueSystem::EndDialogue()
+{
+
+}
+
+void UDialogueSystem::OnDialogueStart_Implementation()
+{
+}
+
+void UDialogueSystem::OnDialogueEnd_Implementation()
+{
+}
+
+void UDialogueSystem::OnNextLine_Implementation()
+{
+}
+
+void UDialogueSystem::OnPlayerDialogue_Implementation()
+{
+}
+
+void UDialogueSystem::OnDialogueOptions_Implementation()
+{
+}

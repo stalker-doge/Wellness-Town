@@ -10,6 +10,9 @@ class UCameraComponent;
 class USpringArmComponent;
 class USphereComponent;
 class UPlayerMovementComponent;
+class USplineComponent;
+class USplineMeshComponent;
+class AItem;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API APlayerCharacter : public ACharacter
@@ -19,11 +22,27 @@ class UE_WELLNESS_TOWN_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
-	TObjectPtr<UCameraComponent> GetCamera();
+
+	UFUNCTION(BlueprintCallable)
+	UCameraComponent* GetCamera();
+
+	void PickUp(AItem* actor);
+	void DropHeldItem();
+	void CastHeldItem();
+	void IsReadyToCast();
+	void ThrowHeldItem();
+	void IsReadyToThrow();
 
 	void Interact();
 	void AltInteract();
+
+	UFUNCTION(BlueprintCallable)
 	float GetMaxSpeed();
+
+	UFUNCTION(BlueprintCallable)
+	void EnableMovement();
+	UFUNCTION(BlueprintCallable)
+	void DisableMovement();
 
 	UFUNCTION()
 	void BeginInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -41,6 +60,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void DrawTrajectory();
+	void CreateSpline(FVector start, FVector unitDirection, float strength, int simTime, bool toDebug);
+	void ClearSpline();
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -56,5 +78,20 @@ private:
 
 	TObjectPtr<AActor> _currentInteractTarget;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> _splineMesh;
+
+	TObjectPtr<USplineComponent> _splineComponent;
+	TArray<TObjectPtr<AActor>> _splineMeshes;
+
+	UPROPERTY(EditAnywhere)
+	float _throwStrength;
+
+	TObjectPtr<AItem> _heldObject;
 	float _timer;
+
+	FVector _lastLocation;
+	FRotator _lastRotation;
+
+	bool _drawTrajectory;
 };

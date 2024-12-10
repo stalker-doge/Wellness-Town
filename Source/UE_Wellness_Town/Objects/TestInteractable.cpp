@@ -17,7 +17,7 @@ ATestInteractable::ATestInteractable()
 	_staticMesh->SetupAttachment(RootComponent);
 }
 
-void ATestInteractable::Interact(TObjectPtr<APlayerCharacter> player)
+void ATestInteractable::Interact(APlayerCharacter* player)
 {
 	GEngine->AddOnScreenDebugMessage(4, 10, FColor::Green, FString::Printf(TEXT("Interacted With: %s"), *GetName()));
 }

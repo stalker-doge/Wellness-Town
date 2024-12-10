@@ -38,6 +38,7 @@ void UNPC_Data::LearnName()
 	_isNameKnown = true;
 }
 
+
 void UNPC_Data::LearnLike(FString toLearn)
 {
 	if (_likes.Contains(toLearn) == false)
@@ -82,7 +83,7 @@ TArray<FString> UNPC_Data::GetLikes()
 			continue;
 		}
 
-		validatedLikes.Add(pair.Key);
+		validatedLikes.Add(*pair.Key);
 	}
 
 	return validatedLikes;
@@ -100,7 +101,7 @@ TArray<FString> UNPC_Data::GetDislikes()
 			continue;
 		}
 
-		validatedDislikes.Add(pair.Key);
+		validatedDislikes.Add(*pair.Key);
 	}
 
 	return validatedDislikes;
