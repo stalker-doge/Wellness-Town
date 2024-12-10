@@ -31,6 +31,9 @@ public:
 	UFUNCTION(BlueprintPure) bool IsWalk() const;
 	UFUNCTION(BlueprintPure) bool IsPushing() const { return _isPushing; }
 
+	void EnableMovement();
+	void DisableMovement();
+
 	//Mantling
 	int RootMotionSourceID;
 	TSharedPtr<FRootMotionSource_MoveToForce> RootMotionSource;
@@ -100,6 +103,7 @@ private:
 	float PushingCapsuleRadius = 75.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Pushing") 
 	FName MovableTag = "movable";
+	EMovementMode _lastMode;
 
 	TObjectPtr<AMoveableActor> _pushingActor;
 	bool _isPushing;

@@ -42,6 +42,16 @@ void AWTPlayerController::HandleDrop()
 	_playerCharacter->DropHeldItem();
 }
 
+void AWTPlayerController::HandleCast()
+{
+	_playerCharacter->CastHeldItem();
+}
+
+void AWTPlayerController::HandleCastHold()
+{
+	_playerCharacter->IsReadyToCast();
+}
+
 void AWTPlayerController::HandleThrow()
 {
 	_playerCharacter->ThrowHeldItem();
@@ -141,6 +151,24 @@ void AWTPlayerController::BindActions(UEnhancedInputComponent* inputComponent)
 	if (actionThrowHold != nullptr)
 	{
 		inputComponent->BindAction(actionThrowHold, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleThrowHold);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Throw Hold Action"));
+	}
+
+	if (actionCast != nullptr)
+	{
+		inputComponent->BindAction(actionCast, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleCast);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Throw Action"));
+	}
+
+	if (actionCastHold != nullptr)
+	{
+		inputComponent->BindAction(actionCastHold, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleCastHold);
 	}
 	else
 	{

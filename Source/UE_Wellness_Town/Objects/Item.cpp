@@ -41,6 +41,16 @@ void AItem::Interact(TObjectPtr<APlayerCharacter> player)
 	player->PickUp(this);
 }
 
+bool AItem::ItemCast(AActor* player, USplineComponent* path)
+{
+	if (path == nullptr)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 // Called when the game starts or when spawned
 void AItem::BeginPlay()
 {

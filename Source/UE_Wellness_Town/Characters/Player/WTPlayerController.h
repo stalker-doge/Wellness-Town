@@ -24,6 +24,8 @@ protected:
 	void HandleInteract();
 	void HandleAltInteract();
 	void HandleDrop();
+	void HandleCast();
+	void HandleCastHold();
 	void HandleThrow();
 	void HandleThrowHold();
 
@@ -57,6 +59,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Character Actions")
 	TObjectPtr<UInputAction> actionThrowHold;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Character Actions")
+	TObjectPtr<UInputAction> actionCast;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Character Actions")
+	TObjectPtr<UInputAction> actionCastHold;
 
 private:
 	UPROPERTY()

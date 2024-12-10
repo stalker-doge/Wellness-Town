@@ -38,6 +38,7 @@ void UNPC_Data::LearnName()
 	_isNameKnown = true;
 }
 
+
 void UNPC_Data::LearnLike(FString toLearn)
 {
 	if (_likes.Contains(toLearn) == false)

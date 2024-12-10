@@ -22,6 +22,7 @@ void UPlayerMovementComponent::InitializeComponent()
 	_player = Cast<APlayerCharacter>(GetOwner());
 	check(_player);
 
+	_lastMode = EMovementMode::MOVE_Walking;
 	InitAnimations();
 }
 
@@ -76,6 +77,17 @@ bool UPlayerMovementComponent::IsWalk() const
 	}
 
 	return true;
+}
+
+void UPlayerMovementComponent::EnableMovement()
+{
+	MovementMode = _lastMode;
+}
+
+void UPlayerMovementComponent::DisableMovement()
+{
+	_lastMode = MovementMode;
+	MovementMode = EMovementMode::MOVE_None;
 }
 
 #pragma region "Pushing"

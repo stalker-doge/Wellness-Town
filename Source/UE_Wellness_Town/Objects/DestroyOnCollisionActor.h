@@ -4,31 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "UE_Wellness_Town/Interfaces/Interactable.h"
-#include "Item.generated.h"
+#include "DestroyOnCollisionActor.generated.h"
 
-class APlayerCharacter;
 class UStaticMeshComponent;
-class USplineComponent;
+class USphereComponent;
 
 UCLASS()
-class UE_WELLNESS_TOWN_API AItem : public AActor, public IInteractable
+class UE_WELLNESS_TOWN_API ADestroyOnCollisionActor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AItem();
+	ADestroyOnCollisionActor();
 
+	void SetCollisionTarget(TObjectPtr<AActor> target);
 	TObjectPtr<UStaticMeshComponent> GetStaticMesh();
 
-	void DisableCollision();
-	void EnableCollision();
-
-	bool IsCastable() { return _isCastable; };
-
-	virtual void Interact(TObjectPtr<APlayerCharacter> player) override;
-	virtual bool ItemCast(AActor* player, USplineComponent* path);
+	UFUNCTION()
+	void BeginInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -36,10 +30,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-protected:
+private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> _staticMesh;
 
-	UPROPERTY(EditAnywhere)
-	bool _isCastable;
+	TObjectPtr<AActor> _collisionTarget;
 };

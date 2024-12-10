@@ -73,30 +73,22 @@ void UDialogueSystem::EndDialogue()
 
 }
 
-void UDialogueSystem::OnDialogueStart()
-{
-
-}
-
-void UDialogueSystem::OnDialogueEnd()
-{
-
-}
-
-void UDialogueSystem::OnNextLine()
+void UDialogueSystem::OnDialogueStart_Implementation()
 {
 }
 
-void UDialogueSystem::OnPlayerDialogue()
+void UDialogueSystem::OnDialogueEnd_Implementation()
 {
-
 }
 
-void UDialogueSystem::OnDialogueOptions()
+void UDialogueSystem::OnNextLine_Implementation()
 {
-	//Displays the dialogue options
-
-
-
 }
 
+void UDialogueSystem::OnPlayerDialogue_Implementation()
+{
+}
+
+void UDialogueSystem::OnDialogueOptions_Implementation()
+{
+}
