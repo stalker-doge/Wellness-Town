@@ -13,7 +13,7 @@ AWT_GameMode::AWT_GameMode()
 
 }
 
-TObjectPtr<UNPC_Manager> AWT_GameMode::GetNPCManager()
+UNPC_Manager* AWT_GameMode::GetNPCManager()
 {
 	return _npcManager;
 }

@@ -36,7 +36,6 @@ private:
 
 	TObjectPtr<APlayerCharacter> _player;
 
-	FVector _start;
 	FVector _end;
 
 	bool _isFishing;

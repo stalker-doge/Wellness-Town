@@ -20,7 +20,7 @@ UNPC_Data* ANPC_Base::GetNPCData()
 	return _data.Get();
 }
 
-void ANPC_Base::Interact(TObjectPtr<APlayerCharacter> player)
+void ANPC_Base::Interact(APlayerCharacter* player)
 {
 	if (_dialogueDefault == nullptr)
 	{

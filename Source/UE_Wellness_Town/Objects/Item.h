@@ -27,7 +27,7 @@ public:
 
 	bool IsCastable() { return _isCastable; };
 
-	virtual void Interact(TObjectPtr<APlayerCharacter> player) override;
+	virtual void Interact(APlayerCharacter* player) override;
 	virtual bool ItemCast(AActor* player, USplineComponent* path);
 
 	// Called every frame

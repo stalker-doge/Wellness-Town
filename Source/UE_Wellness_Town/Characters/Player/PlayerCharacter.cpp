@@ -45,12 +45,12 @@ APlayerCharacter::APlayerCharacter()
 	_heldObject = nullptr;
 }
 
-TObjectPtr<UCameraComponent> APlayerCharacter::GetCamera()
+UCameraComponent* APlayerCharacter::GetCamera()
 {
 	return _camera;
 }
 
-void APlayerCharacter::PickUp(TObjectPtr<AItem> actor)
+void APlayerCharacter::PickUp(AItem* actor)
 {
 	if (_heldObject != nullptr)
 	{

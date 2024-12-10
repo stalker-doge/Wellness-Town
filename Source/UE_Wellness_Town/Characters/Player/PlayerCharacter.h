@@ -22,9 +22,11 @@ class UE_WELLNESS_TOWN_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
-	TObjectPtr<UCameraComponent> GetCamera();
 
-	void PickUp(TObjectPtr<AItem> actor);
+	UFUNCTION(BlueprintCallable)
+	UCameraComponent* GetCamera();
+
+	void PickUp(AItem* actor);
 	void DropHeldItem();
 	void CastHeldItem();
 	void IsReadyToCast();
@@ -33,9 +35,13 @@ public:
 
 	void Interact();
 	void AltInteract();
+
+	UFUNCTION(BlueprintCallable)
 	float GetMaxSpeed();
 
+	UFUNCTION(BlueprintCallable)
 	void EnableMovement();
+	UFUNCTION(BlueprintCallable)
 	void DisableMovement();
 
 	UFUNCTION()
@@ -69,6 +75,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UPlayerMovementComponent> _movementComponent;
+
 	TObjectPtr<AActor> _currentInteractTarget;
 
 	UPROPERTY(EditAnywhere)

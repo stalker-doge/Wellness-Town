@@ -27,9 +27,12 @@ public:
 	virtual void UpdateCharacterStateAfterMovement(float DeltaSeconds) override;
 
 	// Blueprint Animation
-	UFUNCTION(BlueprintPure) float GetSpeed() const;
-	UFUNCTION(BlueprintPure) bool IsWalk() const;
-	UFUNCTION(BlueprintPure) bool IsPushing() const { return _isPushing; }
+	UFUNCTION(BlueprintPure) 
+	float GetSpeed() const;
+	UFUNCTION(BlueprintPure) 
+	bool IsWalk() const;
+	UFUNCTION(BlueprintPure) 
+	bool IsPushing() const { return _isPushing; }
 
 	void EnableMovement();
 	void DisableMovement();

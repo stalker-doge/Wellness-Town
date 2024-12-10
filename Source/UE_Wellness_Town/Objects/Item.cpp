@@ -36,7 +36,7 @@ void AItem::EnableCollision()
 	_staticMesh->SetSimulatePhysics(true);
 }
 
-void AItem::Interact(TObjectPtr<APlayerCharacter> player)
+void AItem::Interact(APlayerCharacter* player)
 {
 	player->PickUp(this);
 }

@@ -19,7 +19,7 @@ public:
 	// Sets default values for this actor's properties
 	ATestInteractable();
 
-	virtual void Interact(TObjectPtr<APlayerCharacter> player) override;
+	virtual void Interact(APlayerCharacter* player) override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

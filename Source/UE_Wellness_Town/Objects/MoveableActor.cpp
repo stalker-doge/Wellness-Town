@@ -25,15 +25,15 @@ AMoveableActor::AMoveableActor()
 	_physicsComponent->SetAngularSwing2Limit(ACM_Locked, 0.f);
 	_physicsComponent->SetAngularTwistLimit(ACM_Locked, 0.f);
 
-	FConstrainComponentPropName ComponentPropName;
-	ComponentPropName.ComponentName = "MeshComponent";
-	_physicsComponent->ComponentName1 = ComponentPropName;
+	FConstrainComponentPropName componentPropName;
+	componentPropName.ComponentName = "MeshComponent";
+	_physicsComponent->ComponentName1 = componentPropName;
 	_physicsComponent->SetupAttachment(_meshComponent);
 
 	Tags.Add("movable");
 }
 
-void AMoveableActor::AddForce(TObjectPtr<APlayerCharacter> target)
+void AMoveableActor::AddForce(APlayerCharacter* target)
 {
 	float playerDir = UKismetAnimationLibrary::CalculateDirection(target->GetVelocity(), target->GetActorRotation());
 
@@ -49,8 +49,6 @@ void AMoveableActor::AddForce(TObjectPtr<APlayerCharacter> target)
 
 	if (dot > 0.5)
 	{
-		GEngine->AddOnScreenDebugMessage(6, 10, FColor::Red, FString::Printf(TEXT("X: %f"), dirX));
-		GEngine->AddOnScreenDebugMessage(7, 10, FColor::Red, FString::Printf(TEXT("PlayerDirection: %f"), playerDir));
 		if (dirX < -180 && playerDir < -100)
 		{
 			_meshComponent->AddImpulse(target->GetVelocity() * speed);

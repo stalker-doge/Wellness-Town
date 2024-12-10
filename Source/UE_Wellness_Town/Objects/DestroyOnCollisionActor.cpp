@@ -18,12 +18,12 @@ ADestroyOnCollisionActor::ADestroyOnCollisionActor()
 	_staticMesh->SetupAttachment(RootComponent);
 }
 
-void ADestroyOnCollisionActor::SetCollisionTarget(TObjectPtr<AActor> target)
+void ADestroyOnCollisionActor::SetCollisionTarget(AActor* target)
 {
 	_collisionTarget = target;
 }
 
-TObjectPtr<UStaticMeshComponent> ADestroyOnCollisionActor::GetStaticMesh()
+UStaticMeshComponent* ADestroyOnCollisionActor::GetStaticMesh()
 {
 	return _staticMesh;
 }

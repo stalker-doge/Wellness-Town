@@ -23,7 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	UNPC_Data* GetNPCData();
 
-	virtual void Interact(TObjectPtr<APlayerCharacter> player) override;
+	virtual void Interact(APlayerCharacter* player) override;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input

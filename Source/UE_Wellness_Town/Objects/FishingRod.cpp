@@ -28,7 +28,7 @@ void AFishingRod::CatchLoot()
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	TObjectPtr<ADestroyOnCollisionActor> loot = GetWorld()->SpawnActor<ADestroyOnCollisionActor>(*toSpawn, _end + FVector(0, 50, 0), FRotator::ZeroRotator, spawnParams);
+	TObjectPtr<ADestroyOnCollisionActor> loot = GetWorld()->SpawnActor<ADestroyOnCollisionActor>(*toSpawn, _end, FRotator::ZeroRotator, spawnParams);
 	loot->SetCollisionTarget(_player);
 
 	FVector dir = _player->GetActorLocation() - loot->GetActorLocation();
@@ -63,11 +63,6 @@ bool AFishingRod::ItemCast(AActor* player, USplineComponent* path)
 
 	for (int i = 0; i < path->GetNumberOfSplinePoints(); i++)
 	{
-		if (i == 0)
-		{
-			_start = path->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World);
-		}
-
 		if (UKismetSystemLibrary::SphereOverlapActors(this, path->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local), 0.5f, objectTypes, nullptr, toIgnore, hitData))
 		{
 			for (AActor* data : hitData)
@@ -76,13 +71,11 @@ bool AFishingRod::ItemCast(AActor* player, USplineComponent* path)
 				{
 					return false;
 				}
-				else
-				{
-					_end = path->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
-					_player->DisableMovement();
-					InitFishing();
-					return true;
-				}
+
+				_end = path->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
+				_player->DisableMovement();
+				InitFishing();
+				return true;
 			}
 		}
 	}
