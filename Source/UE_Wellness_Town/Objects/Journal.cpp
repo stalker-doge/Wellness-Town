@@ -22,7 +22,7 @@ AJournal::AJournal()
 	_staticMesh->SetupAttachment(RootComponent);
 }
 
-void AJournal::Init(TObjectPtr<UNPC_Manager> npcmanager)
+void AJournal::Init(UNPC_Manager* npcmanager)
 {
 	_npcManager = npcmanager;
 
@@ -39,7 +39,7 @@ void AJournal::Init(TObjectPtr<UNPC_Manager> npcmanager)
 	GEngine->AddOnScreenDebugMessage(7, 3, FColor::Green, FString::Printf(TEXT("Max Page: %f"), _maxPage));
 }
 
-void AJournal::Interact(TObjectPtr<APlayerCharacter> player)
+void AJournal::Interact(APlayerCharacter* player)
 {
 	_journalWidget->AddToViewport();
 

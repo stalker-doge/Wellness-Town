@@ -9,6 +9,7 @@
 
 class APlayerCharacter;
 class UStaticMeshComponent;
+class USplineComponent;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API AItem : public AActor, public IInteractable
@@ -24,7 +25,10 @@ public:
 	void DisableCollision();
 	void EnableCollision();
 
-	virtual void Interact(TObjectPtr<APlayerCharacter> player) override;
+	bool IsCastable() { return _isCastable; };
+
+	virtual void Interact(APlayerCharacter* player) override;
+	virtual bool ItemCast(AActor* player, USplineComponent* path);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,7 +36,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-private:
+protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> _staticMesh;
+
+	UPROPERTY(EditAnywhere)
+	bool _isCastable;
 };

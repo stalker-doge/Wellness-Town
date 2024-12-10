@@ -36,9 +36,19 @@ void AItem::EnableCollision()
 	_staticMesh->SetSimulatePhysics(true);
 }
 
-void AItem::Interact(TObjectPtr<APlayerCharacter> player)
+void AItem::Interact(APlayerCharacter* player)
 {
 	player->PickUp(this);
+}
+
+bool AItem::ItemCast(AActor* player, USplineComponent* path)
+{
+	if (path == nullptr)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 // Called when the game starts or when spawned

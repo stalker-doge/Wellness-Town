@@ -7,7 +7,7 @@
 #include "DialogueSystem.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UE_WELLNESS_TOWN_API UDialogueSystem : public UActorComponent
 {
 	GENERATED_BODY()
@@ -54,20 +54,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")//ends the dialogue
 	void EndDialogue();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Dialogue")//custom event for starting dialogue
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")  //custom event for starting dialogue
 	void OnDialogueStart();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Dialogue")//custom event for ending dialogue
+	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")//custom event for ending dialogue
 	void OnDialogueEnd();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Dialogue")//custom event for loading the next line of dialogue
+	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")//custom event for loading the next line of dialogue
 	void OnNextLine();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Dialogue")//custom event for player dialogue
+	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")//custom event for player dialogue
 	void OnPlayerDialogue();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Dialogue")//custom event for dialogue options
+	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")//custom event for dialogue options
 	void OnDialogueOptions();
-
-		
 };

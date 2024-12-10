@@ -20,9 +20,9 @@ class UE_WELLNESS_TOWN_API AJournal : public AActor, public IInteractable
 public:	
 	// Sets default values for this actor's properties
 	AJournal();
-	void Init(TObjectPtr<UNPC_Manager> npcmanager);
+	void Init(UNPC_Manager* npcmanager);
 
-	virtual void Interact(TObjectPtr<APlayerCharacter> player) override;
+	virtual void Interact(APlayerCharacter* player) override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

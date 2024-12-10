@@ -22,16 +22,27 @@ class UE_WELLNESS_TOWN_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
-	TObjectPtr<UCameraComponent> GetCamera();
 
-	void PickUp(TObjectPtr<AItem> actor);
+	UFUNCTION(BlueprintCallable)
+	UCameraComponent* GetCamera();
+
+	void PickUp(AItem* actor);
 	void DropHeldItem();
+	void CastHeldItem();
+	void IsReadyToCast();
 	void ThrowHeldItem();
 	void IsReadyToThrow();
 
 	void Interact();
 	void AltInteract();
+
+	UFUNCTION(BlueprintCallable)
 	float GetMaxSpeed();
+
+	UFUNCTION(BlueprintCallable)
+	void EnableMovement();
+	UFUNCTION(BlueprintCallable)
+	void DisableMovement();
 
 	UFUNCTION()
 	void BeginInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -50,6 +61,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	void DrawTrajectory();
+	void CreateSpline(FVector start, FVector unitDirection, float strength, int simTime, bool toDebug);
+	void ClearSpline();
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -62,6 +75,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UPlayerMovementComponent> _movementComponent;
+
 	TObjectPtr<AActor> _currentInteractTarget;
 
 	UPROPERTY(EditAnywhere)
@@ -77,5 +91,7 @@ private:
 	float _timer;
 
 	FVector _lastLocation;
+	FRotator _lastRotation;
+
 	bool _drawTrajectory;
 };

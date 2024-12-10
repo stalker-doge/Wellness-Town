@@ -3,6 +3,7 @@
 
 #include "NPC_Base.h"
 #include "UE_Wellness_Town/Characters/NPCs/NPC_Data.h"
+#include "UE_Wellness_Town/Dialogue/DialogueSystem.h"
 
 // Sets default values
 ANPC_Base::ANPC_Base()
@@ -14,13 +15,24 @@ ANPC_Base::ANPC_Base()
 	checkf(_data, TEXT("NPC is missing NPC_Data component"));
 }
 
-TObjectPtr<UNPC_Data> ANPC_Base::GetNPCData()
+UNPC_Data* ANPC_Base::GetNPCData()
 {
-	return _data;
+	return _data.Get();
 }
 
-void ANPC_Base::Interact(TObjectPtr<APlayerCharacter> player)
+void ANPC_Base::Interact(APlayerCharacter* player)
 {
+	if (_dialogueDefault == nullptr)
+	{
+		return;
+	}
+
+	if (_dialogueComponent == nullptr)
+	{
+		_dialogueComponent = Cast<UDialogueSystem>(AddComponentByClass(_dialogueDefault, false, GetTransform(), true));
+	}
+
+	_dialogueComponent->StartDialogue();
 	GEngine->AddOnScreenDebugMessage(4, 10, FColor::Green, FString::Printf(TEXT("Interacted With: %s"), *_data->GetNPCName()));
 }
 

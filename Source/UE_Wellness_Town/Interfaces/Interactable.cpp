@@ -4,6 +4,6 @@
 
 // Add default functionality here for any IInteractable functions that are not pure virtual.
 
-void IInteractable::Interact(TObjectPtr<APlayerCharacter> player)
+void IInteractable::Interact(APlayerCharacter* player)
 {
 }

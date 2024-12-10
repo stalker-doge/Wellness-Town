@@ -9,7 +9,7 @@ UNPC_Manager::UNPC_Manager()
 {
 }
 
-void UNPC_Manager::PopulateNPCData(TObjectPtr<UWorld> world)
+void UNPC_Manager::PopulateNPCData(UWorld* world)
 {
 	TArray<AActor*> npcs;
 
@@ -23,7 +23,7 @@ void UNPC_Manager::PopulateNPCData(TObjectPtr<UWorld> world)
 	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, FString::Printf(TEXT("%03d"), _npcData.Num()));
 }
 
-TArray<TObjectPtr<UNPC_Data>> UNPC_Manager::GetNPCData()
+TArray<UNPC_Data*> UNPC_Manager::GetNPCData()
 {
 	return _npcData;
 }

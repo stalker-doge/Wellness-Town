@@ -17,14 +17,23 @@ public:
 	// Sets default values for this component's properties
 	UNPC_Data();
 
+	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	int GetTrustScore();
+	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	void AdjustTrustScore(int amount);
 
+	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	int GetFriendshipScore();
+	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	void AdjustFriendshipScore(int amount);
 
+	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	void LearnName();
+
+	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	void LearnLike(FString toLearn);
+
+	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	void LearnDislike(FString toLearn);
 
 	FString GetNPCName();

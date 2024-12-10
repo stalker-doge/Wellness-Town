@@ -17,7 +17,7 @@ class UE_WELLNESS_TOWN_API AWT_GameMode : public AGameModeBase
 public:
 	AWT_GameMode();
 
-	TObjectPtr<UNPC_Manager> GetNPCManager();
+	UNPC_Manager* GetNPCManager();
 
 protected:
 	virtual void BeginPlay() override;
