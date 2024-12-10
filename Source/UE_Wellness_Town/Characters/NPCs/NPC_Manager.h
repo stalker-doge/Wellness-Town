@@ -16,7 +16,9 @@ class UE_WELLNESS_TOWN_API UNPC_Manager : public UObject
 public:
 	UNPC_Manager();
 
+	// Gets the NPC_Data from every NPC in the world
 	void PopulateNPCData(UWorld* world);
+
 	TArray<UNPC_Data*> GetNPCData();
 
 private:

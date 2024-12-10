@@ -18,6 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	ADestroyOnCollisionActor();
 
+	//Sets the target that will trigger this to be destroyed
 	UFUNCTION(BlueprintCallable)
 	void SetCollisionTarget(AActor* target);
 

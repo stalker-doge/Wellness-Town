@@ -22,10 +22,12 @@ void AWT_GameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//Creates NPC Manager
 	_npcManager = NewObject<UNPC_Manager>();
 	checkf(_npcManager, TEXT("NPC_Manager is invalid"));
 	_npcManager->PopulateNPCData(GetWorld());
 
+	//Gets a reference to the Journal in the world
 	_journal = Cast<AJournal>(UGameplayStatics::GetActorOfClass(GetWorld(), AJournal::StaticClass()));
 	checkf(_journal, TEXT("Missing Journal Reference"));
 	_journal->Init(_npcManager);

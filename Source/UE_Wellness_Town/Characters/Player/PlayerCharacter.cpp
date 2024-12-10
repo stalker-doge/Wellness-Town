@@ -57,6 +57,7 @@ void APlayerCharacter::PickUp(AItem* actor)
 		DropHeldItem();
 	}
 
+	//Attaches to player and disables collision
 	_heldObject = actor;
 	_heldObject->DisableCollision();
 	actor->SetActorLocation(GetMesh()->GetSocketLocation("HoldSocket"));
@@ -70,6 +71,7 @@ void APlayerCharacter::DropHeldItem()
 		return;
 	}
 
+	//Reenables collision and detaches from player
 	Cast<AItem>(_heldObject)->EnableCollision();
 	_heldObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	_heldObject = nullptr;
@@ -85,6 +87,7 @@ void APlayerCharacter::CastHeldItem()
 		return;
 	}
 
+	//If the spline is empty (player didn't hold to display trajectory), create one
 	if (_splineComponent->GetNumberOfSplinePoints() == 0)
 	{
 		FVector unitDirection = GetActorForwardVector() + GetActorUpVector();
@@ -95,8 +98,6 @@ void APlayerCharacter::CastHeldItem()
 	}
 
 	bool success = _heldObject->ItemCast(this, _splineComponent);
-
-	GEngine->AddOnScreenDebugMessage(9, 10, FColor::Red, FString::Printf(TEXT("Cast: %s"), success ? TEXT("TRUE") : TEXT("FALSE")));
 
 	_splineComponent->ClearSplinePoints();
 
@@ -129,6 +130,7 @@ void APlayerCharacter::ThrowHeldItem()
 
 	ClearSpline();
 
+	//Reenables collision and detaches from player, then applies physics to throw the item
 	_heldObject->EnableCollision();
 	_heldObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
@@ -181,6 +183,7 @@ void APlayerCharacter::AltInteract()
 
 	IsAltInteracting = true;
 
+	//Disables player rotation if alt interacting, makes the pulling mechanic cleaner
 	_movementComponent->bOrientRotationToMovement = false;
 	_movementComponent->IsPushingActor()->AddForce(this);
 }
@@ -310,6 +313,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	GEngine->AddOnScreenDebugMessage(1, 10, FColor::Red, FString::Printf(TEXT("CurrentTarget: %s"), _currentInteractTarget ? *_currentInteractTarget->GetName() : TEXT("NONE")));
 
+	// Periodically checks if the trajectory should be drawn and checks whether or not the player is near interactable actors
 	if (_timer < 0.05f)
 	{
 		return;

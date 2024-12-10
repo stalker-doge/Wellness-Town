@@ -40,13 +40,16 @@ public:
 	//Mantling
 	int RootMotionSourceID;
 	TSharedPtr<FRootMotionSource_MoveToForce> RootMotionSource;
+	//Checks if the player should be mantling
 	void TryMantle();
 	void OnMantleAnimFinished();
 
+	//Checks if the player should be pushing
 	void TryPushing();
 	bool CanPush();
+	//Updates physics for pushing
 	void PhysPushing(float DeltaTime, int32 Iterations);
-	TObjectPtr<AMoveableActor> IsPushingActor();
+	AMoveableActor* IsPushingActor();
 
 	bool IsCustomMovementMode(const ECustomMovementMode InCustomMovementMode) const;
 	float GetCapsuleRadius() const;
