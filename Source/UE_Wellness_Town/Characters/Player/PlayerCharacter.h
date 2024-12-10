@@ -60,6 +60,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//Below functions manages throwing trajectory
+	//Creates the visual for the spline if needed
 	void DrawTrajectory();
 	void CreateSpline(FVector start, FVector unitDirection, float strength, int simTime, bool toDebug);
 	void ClearSpline();

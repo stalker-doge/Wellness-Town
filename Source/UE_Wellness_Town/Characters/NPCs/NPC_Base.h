@@ -36,9 +36,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNPC_Data> _data;
 
+	// Dialogue component default reference
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UDialogueSystem> _dialogueDefault;
 
+	// Created copy of the default reference, this setup was just for testing and should be changed/removed if unneccessary 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UDialogueSystem> _dialogueComponent;
 };

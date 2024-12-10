@@ -37,6 +37,7 @@ public:
 	void LearnDislike(FString toLearn);
 
 	FString GetNPCName();
+	// Returns a list of strings, the like/dislike if known, or "Unknown".
 	TArray<FString> GetLikes();
 	TArray<FString> GetDislikes();
 

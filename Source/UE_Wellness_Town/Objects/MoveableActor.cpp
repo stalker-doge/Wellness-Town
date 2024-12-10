@@ -35,8 +35,10 @@ AMoveableActor::AMoveableActor()
 
 void AMoveableActor::AddForce(APlayerCharacter* target)
 {
+	//Gets the direction the player is travelling relative to this object
 	float playerDir = UKismetAnimationLibrary::CalculateDirection(target->GetVelocity(), target->GetActorRotation());
 
+	//Gets the direction from the player to this object
 	FVector direction = GetActorLocation() - target->GetActorLocation();
 	float dirX = direction.X;
 	float dirY = direction.Y;
@@ -47,8 +49,10 @@ void AMoveableActor::AddForce(APlayerCharacter* target)
 
 	float speed = target->GetMaxSpeed();
 
+	//Checks if the player is to the side or ahead/behind the object
 	if (dot > 0.5)
 	{
+		//Checks if the player is on the left or right side, then applies force
 		if (dirX < -180 && playerDir < -100)
 		{
 			_meshComponent->AddImpulse(target->GetVelocity() * speed);
@@ -63,6 +67,7 @@ void AMoveableActor::AddForce(APlayerCharacter* target)
 	}
 	else
 	{
+		//Checks if the player is on the front or back side, then applies force
 		if (dirY < -180 && playerDir > 100)
 		{
 			_meshComponent->AddImpulse(target->GetVelocity() * speed);

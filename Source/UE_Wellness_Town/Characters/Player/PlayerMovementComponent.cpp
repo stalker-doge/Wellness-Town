@@ -92,12 +92,7 @@ void UPlayerMovementComponent::DisableMovement()
 #pragma region "Pushing"
 bool UPlayerMovementComponent::CanPush()
 {
-	if (_player->IsAltInteracting == false)
-	{
-		//return false;
-	}
-
-	// check if the character is on walkable floor
+	// Check if the character is on walkable floor
 	FFindFloorResult floorResult;
 	FindFloor(UpdatedComponent->GetComponentLocation(), floorResult, false);
 
@@ -107,7 +102,7 @@ bool UPlayerMovementComponent::CanPush()
 		return false;
 	}
 
-	// check if exist movable actor in front of the character
+	// Check if a movable actor is in front of the player
 	FHitResult hitResult;
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(GetOwner());
@@ -147,7 +142,7 @@ void UPlayerMovementComponent::TryPushing()
 		return;
 	}
 
-	// change capsule size to pushing dimensions
+	// Change capsule size to pushing dimensions
 	const float oldUnscaleHalfHeight = CharacterOwner->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(PushingCapsuleRadius, oldUnscaleHalfHeight);
 	SetMovementMode(MOVE_Custom, CMOVE_Pushing);
@@ -157,7 +152,7 @@ void UPlayerMovementComponent::PhysPushing(const float DeltaTime, const int32 It
 {
 	if (_isPushing == false)
 	{
-		// restore default capsule size
+		// Restore default capsule size
 		const TObjectPtr<ACharacter> defaultCharacter = CharacterOwner->GetClass()->GetDefaultObject<ACharacter>();
 		const float defaultUnscaleRadius = defaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleRadius();
 		const float defaultUnscaleHalfHeight = defaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
@@ -168,7 +163,7 @@ void UPlayerMovementComponent::PhysPushing(const float DeltaTime, const int32 It
 	PhysWalking(DeltaTime, Iterations);
 }
 
-TObjectPtr<AMoveableActor> UPlayerMovementComponent::IsPushingActor()
+AMoveableActor* UPlayerMovementComponent::IsPushingActor()
 {
 	return _pushingActor;
 }
@@ -191,6 +186,7 @@ void UPlayerMovementComponent::TryMantle()
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(GetOwner());
 
+	//Checks if a valid mantleable object is ahead of the player 
 	FHitResult frontResult;
 	FVector frontStart = componentLocation + FVector::UpVector * _mantleUpOffsetDistance;
 	FVector forwardVector = UpdatedComponent->GetForwardVector().GetSafeNormal();
@@ -217,6 +213,7 @@ void UPlayerMovementComponent::TryMantle()
 	
 	DrawDebugPoint(GetWorld(), frontResult.Location, 30, FColor::Emerald, false, 2);
 
+	//Checks if the object has a reachable point on top of it
 	TArray<FHitResult> heightHits;
 	FHitResult surfaceHits;
 	FVector wallUp = FVector::VectorPlaneProject(FVector::UpVector, frontResult.Normal).GetSafeNormal();
@@ -266,6 +263,7 @@ void UPlayerMovementComponent::TryMantle()
 	DrawDebugCapsule(GetWorld(), componentLocation, GetCapsuleHalfHeight(), GetCapsuleRadius(), FQuat::Identity, FColor::Red, false, 4);
 	DrawDebugCapsule(GetWorld(), transitionTarget, GetCapsuleHalfHeight(), GetCapsuleRadius(), FQuat::Identity, FColor::Green, false, 3);
 
+	//Starts the animation and applies a fixed motion to the player
 	RootMotionSource.Reset();
 	RootMotionSource = MakeShared<FRootMotionSource_MoveToForce>();
 	RootMotionSource->AccumulateMode = ERootMotionAccumulateMode::Override;

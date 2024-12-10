@@ -20,6 +20,7 @@ UNPC_Data* ANPC_Base::GetNPCData()
 	return _data.Get();
 }
 
+// Current dialogue was just to check for errors with NPC_Data access. Remove/change if needed for the full Dialogue implementation
 void ANPC_Base::Interact(APlayerCharacter* player)
 {
 	if (_dialogueDefault == nullptr)
