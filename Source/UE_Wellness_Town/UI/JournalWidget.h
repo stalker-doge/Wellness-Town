@@ -16,7 +16,7 @@ class UE_WELLNESS_TOWN_API UJournalWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 
-	void Init(TArray<TObjectPtr<UNPC_Data>> data);
+	void Init(TArray<UNPC_Data*> data);
 
 	UFUNCTION(BlueprintCallable)
 	void Close();

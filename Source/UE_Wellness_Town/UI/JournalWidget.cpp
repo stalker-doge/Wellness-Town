@@ -5,7 +5,7 @@
 #include "UE_Wellness_Town/Characters/NPCs/NPC_Data.h"
 #include "UMG.h"
 
-void UJournalWidget::Init(TArray<TObjectPtr<UNPC_Data>> data)
+void UJournalWidget::Init(TArray<UNPC_Data*> data)
 {
 	index = 2;
 
@@ -44,6 +44,7 @@ void UJournalWidget::NextPage()
 	UpdatePage();
 }
 
+//Updates page data, needs to manage the images and clear the last empty page if there are an odd number of NPCs
 void UJournalWidget::UpdatePage()
 {
 	_maxPage = _npcData.Num();

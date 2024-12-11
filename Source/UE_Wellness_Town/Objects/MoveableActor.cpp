@@ -25,18 +25,20 @@ AMoveableActor::AMoveableActor()
 	_physicsComponent->SetAngularSwing2Limit(ACM_Locked, 0.f);
 	_physicsComponent->SetAngularTwistLimit(ACM_Locked, 0.f);
 
-	FConstrainComponentPropName ComponentPropName;
-	ComponentPropName.ComponentName = "MeshComponent";
-	_physicsComponent->ComponentName1 = ComponentPropName;
+	FConstrainComponentPropName componentPropName;
+	componentPropName.ComponentName = "MeshComponent";
+	_physicsComponent->ComponentName1 = componentPropName;
 	_physicsComponent->SetupAttachment(_meshComponent);
 
 	Tags.Add("movable");
 }
 
-void AMoveableActor::AddForce(TObjectPtr<APlayerCharacter> target)
+void AMoveableActor::AddForce(APlayerCharacter* target)
 {
+	//Gets the direction the player is travelling relative to this object
 	float playerDir = UKismetAnimationLibrary::CalculateDirection(target->GetVelocity(), target->GetActorRotation());
 
+	//Gets the direction from the player to this object
 	FVector direction = GetActorLocation() - target->GetActorLocation();
 	float dirX = direction.X;
 	float dirY = direction.Y;
@@ -47,10 +49,10 @@ void AMoveableActor::AddForce(TObjectPtr<APlayerCharacter> target)
 
 	float speed = target->GetMaxSpeed();
 
+	//Checks if the player is to the side or ahead/behind the object
 	if (dot > 0.5)
 	{
-		GEngine->AddOnScreenDebugMessage(6, 10, FColor::Red, FString::Printf(TEXT("X: %f"), dirX));
-		GEngine->AddOnScreenDebugMessage(7, 10, FColor::Red, FString::Printf(TEXT("PlayerDirection: %f"), playerDir));
+		//Checks if the player is on the left or right side, then applies force
 		if (dirX < -180 && playerDir < -100)
 		{
 			_meshComponent->AddImpulse(target->GetVelocity() * speed);
@@ -65,6 +67,7 @@ void AMoveableActor::AddForce(TObjectPtr<APlayerCharacter> target)
 	}
 	else
 	{
+		//Checks if the player is on the front or back side, then applies force
 		if (dirY < -180 && playerDir > 100)
 		{
 			_meshComponent->AddImpulse(target->GetVelocity() * speed);

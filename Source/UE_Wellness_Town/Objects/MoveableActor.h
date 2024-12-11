@@ -19,7 +19,7 @@ public:
 	// Sets default values for this actor's properties
 	AMoveableActor();
 
-	void AddForce(TObjectPtr<APlayerCharacter> target);
+	void AddForce(APlayerCharacter* target);
 private:
 	UPROPERTY(EditAnywhere, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> _meshComponent;

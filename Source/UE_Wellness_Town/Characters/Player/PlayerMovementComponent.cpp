@@ -9,9 +9,9 @@
 
 void UPlayerMovementComponent::InitAnimations()
 {
-	if (const auto MantleNotify = FindNotifyByClass<UMantleAnimNotify>(_mantleAnimation))
+	if (const auto mantleNotify = FindNotifyByClass<UMantleAnimNotify>(_mantleAnimation))
 	{
-		MantleNotify->OnNotified.AddUObject(this, &UPlayerMovementComponent::OnMantleAnimFinished);
+		mantleNotify->OnNotified.AddUObject(this, &UPlayerMovementComponent::OnMantleAnimFinished);
 	}
 }
 
@@ -22,6 +22,7 @@ void UPlayerMovementComponent::InitializeComponent()
 	_player = Cast<APlayerCharacter>(GetOwner());
 	check(_player);
 
+	_lastMode = EMovementMode::MOVE_Walking;
 	InitAnimations();
 }
 
@@ -39,7 +40,6 @@ void UPlayerMovementComponent::PhysCustom(float deltaTime, int32 Iterations)
 
 void UPlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
-	GEngine->AddOnScreenDebugMessage(3, 10, FColor::Red, FString::Printf(TEXT("Can Push: %s "), _isPushing ? TEXT("TRUE") : TEXT("FALSE")));
 	TryPushing();
 	TryMantle();
 
@@ -50,9 +50,9 @@ void UPlayerMovementComponent::UpdateCharacterStateAfterMovement(float DeltaSeco
 {
 	Super::UpdateCharacterStateAfterMovement(DeltaSeconds);
 
-	const TSharedPtr<FRootMotionSource> RootMotion = GetRootMotionSourceByID(RootMotionSourceID);
+	const TSharedPtr<FRootMotionSource> rootMotion = GetRootMotionSourceByID(RootMotionSourceID);
 
-	if (RootMotion && RootMotion->Status.HasFlag(ERootMotionSourceStatusFlags::Finished))
+	if (rootMotion && rootMotion->Status.HasFlag(ERootMotionSourceStatusFlags::Finished))
 	{
 		RemoveRootMotionSourceByID(RootMotionSourceID);
 	}
@@ -78,39 +78,46 @@ bool UPlayerMovementComponent::IsWalk() const
 	return true;
 }
 
+void UPlayerMovementComponent::EnableMovement()
+{
+	MovementMode = _lastMode;
+}
+
+void UPlayerMovementComponent::DisableMovement()
+{
+	_lastMode = MovementMode;
+	MovementMode = EMovementMode::MOVE_None;
+}
+
 #pragma region "Pushing"
 bool UPlayerMovementComponent::CanPush()
 {
-	if (_player->IsAltInteracting == false)
-	{
-		//return false;
-	}
+	// Check if the character is on walkable floor
+	FFindFloorResult floorResult;
+	FindFloor(UpdatedComponent->GetComponentLocation(), floorResult, false);
 
-	// check if the character is on walkable floor
-	FFindFloorResult FloorResult;
-	FindFloor(UpdatedComponent->GetComponentLocation(), FloorResult, false);
-
-	if (!FloorResult.bWalkableFloor)
+	if (!floorResult.bWalkableFloor)
 	{
 		_pushingActor = nullptr;
 		return false;
 	}
 
-	// check if exist movable actor in front of the character
-	FHitResult HitResult;
+	// Check if a movable actor is in front of the player
+	FHitResult hitResult;
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(GetOwner());
 
-	const FVector Start = UpdatedComponent->GetComponentLocation();
-	const FVector End = Start + UpdatedComponent->GetForwardVector() * ForwardSearchPushingLength;
+	const FVector start = UpdatedComponent->GetComponentLocation();
+	const FVector end = start + UpdatedComponent->GetForwardVector() * ForwardSearchPushingLength;
 
-	if (!GetWorld()->LineTraceSingleByProfile(HitResult, Start, End, "BlockAll", params))
+	if (!GetWorld()->LineTraceSingleByProfile(hitResult, start, end, "BlockAll", params))
 	{
 		_pushingActor = nullptr;
 		return false;
 	}
 
-	const TObjectPtr<AActor> Actor = HitResult.GetActor();
+	const TObjectPtr<AActor> Actor = hitResult.GetActor();
+
 	if (!Actor)
 	{
 		_pushingActor = nullptr;
@@ -135,9 +142,9 @@ void UPlayerMovementComponent::TryPushing()
 		return;
 	}
 
-	// change capsule size to pushing dimensions
-	const float OldUnscaleHalfHeight = CharacterOwner->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(PushingCapsuleRadius, OldUnscaleHalfHeight);
+	// Change capsule size to pushing dimensions
+	const float oldUnscaleHalfHeight = CharacterOwner->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(PushingCapsuleRadius, oldUnscaleHalfHeight);
 	SetMovementMode(MOVE_Custom, CMOVE_Pushing);
 }
 
@@ -145,18 +152,18 @@ void UPlayerMovementComponent::PhysPushing(const float DeltaTime, const int32 It
 {
 	if (_isPushing == false)
 	{
-		// restore default capsule size
-		const TObjectPtr<ACharacter> DefaultCharacter = CharacterOwner->GetClass()->GetDefaultObject<ACharacter>();
-		const float DefaultUnscaleRadius = DefaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleRadius();
-		const float DefaultUnscaleHalfHeight = DefaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-		CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(DefaultUnscaleRadius, DefaultUnscaleHalfHeight);
+		// Restore default capsule size
+		const TObjectPtr<ACharacter> defaultCharacter = CharacterOwner->GetClass()->GetDefaultObject<ACharacter>();
+		const float defaultUnscaleRadius = defaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+		const float defaultUnscaleHalfHeight = defaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+		CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(defaultUnscaleRadius, defaultUnscaleHalfHeight);
 		SetMovementMode(DefaultLandMovementMode);
 	}
 
 	PhysWalking(DeltaTime, Iterations);
 }
 
-TObjectPtr<AMoveableActor> UPlayerMovementComponent::IsPushingActor()
+AMoveableActor* UPlayerMovementComponent::IsPushingActor()
 {
 	return _pushingActor;
 }
@@ -179,6 +186,7 @@ void UPlayerMovementComponent::TryMantle()
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(GetOwner());
 
+	//Checks if a valid mantleable object is ahead of the player 
 	FHitResult frontResult;
 	FVector frontStart = componentLocation + FVector::UpVector * _mantleUpOffsetDistance;
 	FVector forwardVector = UpdatedComponent->GetForwardVector().GetSafeNormal();
@@ -205,6 +213,7 @@ void UPlayerMovementComponent::TryMantle()
 	
 	DrawDebugPoint(GetWorld(), frontResult.Location, 30, FColor::Emerald, false, 2);
 
+	//Checks if the object has a reachable point on top of it
 	TArray<FHitResult> heightHits;
 	FHitResult surfaceHits;
 	FVector wallUp = FVector::VectorPlaneProject(FVector::UpVector, frontResult.Normal).GetSafeNormal();
@@ -254,6 +263,7 @@ void UPlayerMovementComponent::TryMantle()
 	DrawDebugCapsule(GetWorld(), componentLocation, GetCapsuleHalfHeight(), GetCapsuleRadius(), FQuat::Identity, FColor::Red, false, 4);
 	DrawDebugCapsule(GetWorld(), transitionTarget, GetCapsuleHalfHeight(), GetCapsuleRadius(), FQuat::Identity, FColor::Green, false, 3);
 
+	//Starts the animation and applies a fixed motion to the player
 	RootMotionSource.Reset();
 	RootMotionSource = MakeShared<FRootMotionSource_MoveToForce>();
 	RootMotionSource->AccumulateMode = ERootMotionAccumulateMode::Override;

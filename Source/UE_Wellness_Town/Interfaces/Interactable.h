@@ -21,5 +21,5 @@ class UE_WELLNESS_TOWN_API IInteractable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Interact(TObjectPtr<APlayerCharacter> player);
+	virtual void Interact(APlayerCharacter* player);
 };

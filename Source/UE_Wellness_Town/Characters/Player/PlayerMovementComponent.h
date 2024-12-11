@@ -27,20 +27,29 @@ public:
 	virtual void UpdateCharacterStateAfterMovement(float DeltaSeconds) override;
 
 	// Blueprint Animation
-	UFUNCTION(BlueprintPure) float GetSpeed() const;
-	UFUNCTION(BlueprintPure) bool IsWalk() const;
-	UFUNCTION(BlueprintPure) bool IsPushing() const { return _isPushing; }
+	UFUNCTION(BlueprintPure) 
+	float GetSpeed() const;
+	UFUNCTION(BlueprintPure) 
+	bool IsWalk() const;
+	UFUNCTION(BlueprintPure) 
+	bool IsPushing() const { return _isPushing; }
+
+	void EnableMovement();
+	void DisableMovement();
 
 	//Mantling
 	int RootMotionSourceID;
 	TSharedPtr<FRootMotionSource_MoveToForce> RootMotionSource;
+	//Checks if the player should be mantling
 	void TryMantle();
 	void OnMantleAnimFinished();
 
+	//Checks if the player should be pushing
 	void TryPushing();
 	bool CanPush();
+	//Updates physics for pushing
 	void PhysPushing(float DeltaTime, int32 Iterations);
-	TObjectPtr<AMoveableActor> IsPushingActor();
+	AMoveableActor* IsPushingActor();
 
 	bool IsCustomMovementMode(const ECustomMovementMode InCustomMovementMode) const;
 	float GetCapsuleRadius() const;
@@ -100,6 +109,7 @@ private:
 	float PushingCapsuleRadius = 75.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Pushing") 
 	FName MovableTag = "movable";
+	EMovementMode _lastMode;
 
 	TObjectPtr<AMoveableActor> _pushingActor;
 	bool _isPushing;

@@ -9,6 +9,7 @@
 
 class UNPC_Data;
 class APlayerCharacter;
+class UDialogueSystem;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API ANPC_Base : public ACharacter, public IInteractable
@@ -19,9 +20,10 @@ public:
 	// Sets default values for this character's properties
 	ANPC_Base();
 
-	TObjectPtr<UNPC_Data> GetNPCData();
+	UFUNCTION(BlueprintCallable, Category = "NPC Data")
+	UNPC_Data* GetNPCData();
 
-	virtual void Interact(TObjectPtr<APlayerCharacter> player) override;
+	virtual void Interact(APlayerCharacter* player) override;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input
@@ -33,4 +35,12 @@ protected:
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNPC_Data> _data;
+
+	// Dialogue component default reference
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UDialogueSystem> _dialogueDefault;
+
+	// Created copy of the default reference, this setup was just for testing and should be changed/removed if unneccessary 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UDialogueSystem> _dialogueComponent;
 };
