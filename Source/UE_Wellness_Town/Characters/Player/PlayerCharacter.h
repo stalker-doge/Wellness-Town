@@ -49,6 +49,9 @@ public:
 	UFUNCTION()
 	void EndInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact Collider")
+	TObjectPtr<USphereComponent> _interactCollider;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -72,8 +75,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USpringArmComponent> _springArmComponent;
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<USphereComponent> _interactCollider;
+	
 
 	UPROPERTY()
 	TObjectPtr<UPlayerMovementComponent> _movementComponent;
