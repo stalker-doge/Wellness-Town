@@ -37,7 +37,7 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Static Mesh")
 	TObjectPtr<UStaticMeshComponent> _staticMesh;
 
 	UPROPERTY(EditAnywhere)
