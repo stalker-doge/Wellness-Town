@@ -10,6 +10,7 @@
 class UNPC_Data;
 class APlayerCharacter;
 class UDialogueSystem;
+class UGOAP_Agent;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API ANPC_Base : public ACharacter, public IInteractable
@@ -43,4 +44,7 @@ private:
 	// Created copy of the default reference, this setup was just for testing and should be changed/removed if unneccessary 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UDialogueSystem> _dialogueComponent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UGOAP_Agent> _agent;
 };

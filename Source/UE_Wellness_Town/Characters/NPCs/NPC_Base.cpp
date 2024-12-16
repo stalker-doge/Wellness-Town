@@ -4,6 +4,7 @@
 #include "NPC_Base.h"
 #include "UE_Wellness_Town/Characters/NPCs/NPC_Data.h"
 #include "UE_Wellness_Town/Dialogue/DialogueSystem.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/GOAP_Agent.h"
 
 // Sets default values
 ANPC_Base::ANPC_Base()
@@ -13,6 +14,9 @@ ANPC_Base::ANPC_Base()
 
 	_data = CreateDefaultSubobject<UNPC_Data>(TEXT("NPC Info"));
 	checkf(_data, TEXT("NPC is missing NPC_Data component"));
+
+	_agent = CreateDefaultSubobject<UGOAP_Agent>(TEXT("AI Agent"));
+	checkf(_agent, TEXT("NPC is missing GOAP_Agent component"));
 }
 
 UNPC_Data* ANPC_Base::GetNPCData()
