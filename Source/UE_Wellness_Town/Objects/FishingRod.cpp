@@ -13,6 +13,7 @@
 AFishingRod::AFishingRod()
 {
 	_isCastable = true;
+	_displaySpline = true;
 }
 
 void AFishingRod::InitFishing()
