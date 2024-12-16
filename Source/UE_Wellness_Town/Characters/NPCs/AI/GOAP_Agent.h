@@ -12,6 +12,8 @@ class UGOAP_Goal;
 class UGOAP_Planner;
 class UGOAP_Action;
 class UGOAP_Plan;
+class UGOAP_NPCSensor;
+class UTimeManager;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UE_WELLNESS_TOWN_API UGOAP_Agent : public UActorComponent
@@ -27,6 +29,13 @@ public:
 	void SetupGoals();
 	void SetupActions();
 
+	void CalculateActionPlan();
+
+	void SetDestination(FVector destination);
+	FVector GetActorLocation();
+	FVector GetForwardVector();
+
+	bool HasPath();
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 protected:
@@ -36,17 +45,32 @@ protected:
 public:
 
 	TObjectPtr<ANPC_Base> _owner;
+	TObjectPtr<UGOAP_NPCSensor> _npcSensor;
 
+	UPROPERTY()
 	TMap<FString, TObjectPtr<UGOAP_Belief>> _beliefs;
 
-	TObjectPtr<UGOAP_Goal> _currentGoal;
-	TObjectPtr<UGOAP_Goal> _lastGoal;
+	TObjectPtr<UGOAP_Agent> _talkingTo;
+	bool _canTalk;
 
+	UPROPERTY()
+	TObjectPtr<UGOAP_Goal> _currentGoal;
+	UPROPERTY()
+	TObjectPtr<UGOAP_Goal> _lastGoal;
+	UPROPERTY()
 	TObjectPtr<UGOAP_Plan> _plan;
+	UPROPERTY()
 	TObjectPtr<UGOAP_Action> _currentAction;
 
+	UPROPERTY()
 	TArray<TObjectPtr<UGOAP_Action>> _actions;
+	UPROPERTY()
 	TArray<TObjectPtr<UGOAP_Goal>> _goals;
 
+	UPROPERTY()
 	TObjectPtr<UGOAP_Planner> _planner;
+
+	TObjectPtr<UTimeManager> _timeManager;
+	bool _isWorkHours;
+	bool _isSleepHours;
 };

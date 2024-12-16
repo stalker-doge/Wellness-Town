@@ -2,14 +2,15 @@
 
 
 #include "GOAP_Action.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/AbstractStrategy.h"
 
 UGOAP_Action::UGOAP_Action()
 {
 }
 
-void UGOAP_Action::Start()
+void UGOAP_Action::Start(UGOAP_Agent* agent)
 {
-	_strategy->Start();
+	_strategy->Start(agent);
 }
 
 void UGOAP_Action::Update(float deltaTime)

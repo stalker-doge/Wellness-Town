@@ -8,6 +8,7 @@
 #include "GOAP_Action.generated.h"
 
 class UGOAP_Belief;
+class UAbstractStrategy;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API UGOAP_Action : public UObject
@@ -17,7 +18,7 @@ class UE_WELLNESS_TOWN_API UGOAP_Action : public UObject
 public:
 	UGOAP_Action();
 
-	void Start(); //Start Strategy
+	void Start(UGOAP_Agent* agent); //Start Strategy
 	void Update(float deltaTime); //Evaluate Strategy and Beliefs
 	void Stop(); //Stop Strategy
 
@@ -39,7 +40,7 @@ public:
 			action->_cost = cost;
 			return *this;
 		}
-		Builder WithStrategy(IActionStrategy* strategy)
+		Builder WithStrategy(UAbstractStrategy* strategy)
 		{
 			action->_strategy = strategy;
 			return *this;
@@ -60,7 +61,8 @@ public:
 		}
 	};
 public:
-	IActionStrategy* _strategy;
+	UPROPERTY()
+	TObjectPtr<UAbstractStrategy> _strategy;
 
 	TArray<TObjectPtr<UGOAP_Belief>> _preconditions;
 	TArray<TObjectPtr<UGOAP_Belief>> _effects;

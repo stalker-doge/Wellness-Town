@@ -101,8 +101,6 @@ bool UGOAP_Planner::FindPath(UGOAP_Node* parent, TArray<UGOAP_Action*> actions)
 
 			if (newRequiredEffects->Num() == 0)
 			{
-				delete newNode;
-				delete newRequiredEffects;
 				return true;
 			}
 		}

@@ -15,7 +15,7 @@ bool IActionStrategy::Complete()
     return false;
 }
 
-void IActionStrategy::Start()
+void IActionStrategy::Start(UGOAP_Agent* agent)
 {
 }
 

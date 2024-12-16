@@ -13,9 +13,8 @@ class UActionStrategy : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+class UGOAP_Agent;
+
 class UE_WELLNESS_TOWN_API IActionStrategy
 {
 	GENERATED_BODY()
@@ -26,7 +25,7 @@ public:
 	virtual bool CanPerform();
 	virtual bool Complete();
 
-	virtual void Start();
+	virtual void Start(UGOAP_Agent* agent);
 	virtual void Update(float deltaTime);
 	virtual void Stop();
 };

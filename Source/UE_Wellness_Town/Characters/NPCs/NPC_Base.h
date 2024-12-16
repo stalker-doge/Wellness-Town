@@ -7,10 +7,12 @@
 #include "UE_Wellness_Town/Interfaces/Interactable.h"
 #include "NPC_Base.generated.h"
 
+class AAIController;
 class UNPC_Data;
 class APlayerCharacter;
 class UDialogueSystem;
 class UGOAP_Agent;
+class UStaticMeshComponent;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API ANPC_Base : public ACharacter, public IInteractable
@@ -20,6 +22,9 @@ class UE_WELLNESS_TOWN_API ANPC_Base : public ACharacter, public IInteractable
 public:
 	// Sets default values for this character's properties
 	ANPC_Base();
+
+	void SetDestination(FVector destination);
+	bool HasPath();
 
 	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	UNPC_Data* GetNPCData();
@@ -34,6 +39,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNPC_Data> _data;
 
@@ -47,4 +53,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UGOAP_Agent> _agent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AAIController> _controller;
 };
