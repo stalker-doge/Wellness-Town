@@ -87,6 +87,12 @@ void APlayerCharacter::CastHeldItem()
 		return;
 	}
 
+	if (_heldObject->DisplaySpline() == false)
+	{
+		bool success = _heldObject->ItemCast(this, nullptr);
+		return;
+	}
+
 	//If the spline is empty (player didn't hold to display trajectory), create one
 	if (_splineComponent->GetNumberOfSplinePoints() == 0)
 	{
@@ -113,7 +119,7 @@ void APlayerCharacter::CastHeldItem()
 
 void APlayerCharacter::IsReadyToCast()
 {
-	if (_heldObject == nullptr || _heldObject->IsCastable() == false)
+	if (_heldObject == nullptr || _heldObject->IsCastable() == false || _heldObject->DisplaySpline() == false)
 	{
 		return;
 	}
