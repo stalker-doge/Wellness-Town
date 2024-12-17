@@ -37,6 +37,9 @@ public:
 	void AltInteract();
 
 	UFUNCTION(BlueprintCallable)
+	AActor* GetInteractTarget();
+
+	UFUNCTION(BlueprintCallable)
 	float GetMaxSpeed();
 
 	UFUNCTION(BlueprintCallable)

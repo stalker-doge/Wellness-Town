@@ -194,6 +194,11 @@ void APlayerCharacter::AltInteract()
 	_movementComponent->IsPushingActor()->AddForce(this);
 }
 
+AActor* APlayerCharacter::GetInteractTarget()
+{
+	return _currentInteractTarget;
+}
+
 float APlayerCharacter::GetMaxSpeed()
 {
 	return _movementComponent->MaxWalkSpeed;
@@ -244,13 +249,6 @@ void APlayerCharacter::DrawTrajectory()
 		return;
 	}
 
-	for (TObjectPtr<AActor> splineMesh : _splineMeshes)
-	{
-		splineMesh->Destroy();
-	}
-
-	_splineMeshes.Empty();
-
 	_lastLocation = GetActorLocation();
 	_lastRotation = GetActorRotation();
 
@@ -265,8 +263,14 @@ void APlayerCharacter::DrawTrajectory()
 
 	for (int i = 0; i < _splineComponent->GetNumberOfSplinePoints(); i++)
 	{
-		TObjectPtr<AActor> mesh = GetWorld()->SpawnActor<AActor>(*_splineMesh, _splineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World), FRotator::ZeroRotator, spawnParams);
-		_splineMeshes.Add(mesh);
+		if (i >= _splineMeshes.Num() || _splineMeshes[i] == nullptr)
+		{
+			TObjectPtr<AActor> mesh = GetWorld()->SpawnActor<AActor>(*_splineMesh, _splineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World), FRotator::ZeroRotator, spawnParams);
+			_splineMeshes.Add(mesh);
+			continue;
+		}
+
+		_splineMeshes[i]->SetActorLocation(_splineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World));
 	}
 }
 
