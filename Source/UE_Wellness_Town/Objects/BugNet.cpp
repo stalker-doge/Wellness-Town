@@ -25,6 +25,7 @@ bool ABugNet::ItemCast(AActor* player, USplineComponent* path)
 
 	for (AActor* actor : overlappingActors)
 	{
+		Cast<ABug>(actor)->RemoveFromSpawner();
 		actor->Destroy();
 	}
 

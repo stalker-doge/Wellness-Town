@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "UE_Wellness_Town/Characters/Animals/BugSpawner.h"
 
 // Sets default values
 ABug::ABug()
@@ -17,6 +18,19 @@ ABug::ABug()
 	checkf(_bugMesh, TEXT("Bug missing Static Mesh"));
 	_bugMesh->SetupAttachment(RootComponent);
 	_bugMesh->SetCollisionProfileName(FName("NoCollision"));
+}
+
+void ABug::Init(ABugSpawner* spawner)
+{
+	_spawner = spawner;
+}
+
+void ABug::RemoveFromSpawner()
+{
+	if (_spawner != nullptr)
+	{
+		_spawner->Remove(this);
+	}
 }
 
 // Called when the game starts or when spawned

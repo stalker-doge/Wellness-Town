@@ -9,6 +9,7 @@
 class UStaticMeshComponent;
 class UNavigationSystemV1;
 class AAIController;
+class ABugSpawner;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API ABug : public ACharacter
@@ -18,7 +19,8 @@ class UE_WELLNESS_TOWN_API ABug : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABug();
-
+	void Init(ABugSpawner* spawner);
+	void RemoveFromSpawner();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -34,4 +36,5 @@ private:
 	TObjectPtr<UNavigationSystemV1> _navSystem;
 
 	TObjectPtr<AAIController> _controller;
+	TObjectPtr<ABugSpawner> _spawner;
 };
