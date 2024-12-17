@@ -70,7 +70,6 @@ void UDialogueSystem::PlayerDialogue(int32 Option)
 
 void UDialogueSystem::EndDialogue()
 {
-
 }
 
 void UDialogueSystem::OnDialogueStart_Implementation()
@@ -87,6 +86,7 @@ void UDialogueSystem::OnNextLine_Implementation()
 
 void UDialogueSystem::OnPlayerDialogue_Implementation()
 {
+
 }
 
 void UDialogueSystem::OnDialogueOptions_Implementation()

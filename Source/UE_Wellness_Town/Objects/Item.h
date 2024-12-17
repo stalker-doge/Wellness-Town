@@ -22,10 +22,11 @@ public:
 
 	TObjectPtr<UStaticMeshComponent> GetStaticMesh();
 
-	void DisableCollision();
+	virtual void DisableCollision();
 	void EnableCollision();
 
 	bool IsCastable() { return _isCastable; };
+	bool DisplaySpline() { return _displaySpline; };
 
 	virtual void Interact(APlayerCharacter* player) override;
 	virtual bool ItemCast(AActor* player, USplineComponent* path);
@@ -37,9 +38,10 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Static Mesh")
 	TObjectPtr<UStaticMeshComponent> _staticMesh;
 
 	UPROPERTY(EditAnywhere)
 	bool _isCastable;
+	bool _displaySpline;
 };

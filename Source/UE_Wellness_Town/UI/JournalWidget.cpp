@@ -19,7 +19,7 @@ void UJournalWidget::Close()
 	GetWorld()->GetFirstPlayerController<APlayerController>()->SetInputMode(inputMode);
 	GetWorld()->GetFirstPlayerController<APlayerController>()->SetShowMouseCursor(false);
 
-	RemoveFromViewport();
+	RemoveFromParent();
 }
 
 void UJournalWidget::PreviousPage()
