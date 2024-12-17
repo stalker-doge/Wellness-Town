@@ -34,6 +34,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")//what the speaker says
 	TArray<FString> DialogueSpeakerLines;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")//what the says for question 1
+		TArray<FString> DialogueQuestion1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")//what the says for question 2
+		TArray<FString> DialogueQuestion2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")//what the says for question 3
+		TArray<FString> DialogueQuestion3;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -48,11 +57,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")//loads the next line of dialogue
 	void NextLine();
 
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//loads the next line of dialogue from a question
+		void NextLineQuestion(TArray<FString> Question);
+
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")//sets the player dialogue text to the option selected
 	void PlayerDialogue(int32 Option);
 
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")//ends the dialogue
 	void EndDialogue();
+
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//checks if the response is the dialogue wanted
+		bool CheckResponse(FString Response);
+
 
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")  //custom event for starting dialogue

@@ -55,6 +55,16 @@ void UDialogueSystem::NextLine()
 
 }
 
+void UDialogueSystem::NextLineQuestion(TArray<FString> Question)
+{
+	//loads the next line of dialogue
+	DialogueText = Question[DialogueIndex];
+	//increments the index
+	DialogueIndex++;
+	//calls the event
+	OnNextLine();
+}
+
 void UDialogueSystem::PlayerDialogue(int32 Option)
 {
 	//sets the player dialogue text to the option selected
@@ -70,6 +80,19 @@ void UDialogueSystem::PlayerDialogue(int32 Option)
 
 void UDialogueSystem::EndDialogue()
 {
+}
+
+bool UDialogueSystem::CheckResponse(FString Response)
+{
+	//if the player response is the one wanted return true
+	if (Response == PlayerDialogueText)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void UDialogueSystem::OnDialogueStart_Implementation()
