@@ -3,25 +3,32 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "SleepingSystem.generated.h"
 
 /**
  * 
  */
-class UE_WELLNESS_TOWN_API SleepingSystem
-{
-public:
-	SleepingSystem();
-	~SleepingSystem();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sleeping")//enum for time of day
-		enum TimeOfDay
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class UE_WELLNESS_TOWN_API USleepingSystem: public UActorComponent
+{
+	GENERATED_BODY()
+
+	protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+public:
+	USleepingSystem();
+	~USleepingSystem();
+
+		enum class TimeOfDay
 	{
 		Day,
 		Night
 	};
+		TimeOfDay CurrentTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sleeping")//current time of day
-		TimeOfDay CurrentTime{ TimeOfDay::Day };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sleeping")//current day
 		int CurrentDay;
 

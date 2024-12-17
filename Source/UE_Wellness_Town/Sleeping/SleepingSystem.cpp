@@ -3,7 +3,12 @@
 
 #include "SleepingSystem.h"
 
-SleepingSystem::SleepingSystem()
+void USleepingSystem::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+USleepingSystem::USleepingSystem()
 {
 	//initialize the current day to 1
 	CurrentDay = 1;
@@ -11,21 +16,21 @@ SleepingSystem::SleepingSystem()
 	CurrentTime = TimeOfDay::Day;
 }
 
-SleepingSystem::~SleepingSystem()
+USleepingSystem::~USleepingSystem()
 {
 }
 
-void SleepingSystem::SetCurrentDay(int NewDay)
+void USleepingSystem::SetCurrentDay(int NewDay)
 {
 	CurrentDay = NewDay;
 }
 
-int SleepingSystem::GetCurrentDay()
+int USleepingSystem::GetCurrentDay()
 {
 	return CurrentDay;
 }
 
-void SleepingSystem::Sleep()
+void USleepingSystem::Sleep()
 {
 	//if it is day time, set time to night
 	if (CurrentTime == TimeOfDay::Day)
