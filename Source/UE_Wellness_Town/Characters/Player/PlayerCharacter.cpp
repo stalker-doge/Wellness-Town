@@ -216,6 +216,11 @@ void APlayerCharacter::DisableMovement()
 
 void APlayerCharacter::BeginInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OtherActor == this)
+	{
+		return;
+	}
+
 	if (_currentInteractTarget == nullptr)
 	{
 		_currentInteractTarget = OtherActor;
@@ -224,6 +229,11 @@ void APlayerCharacter::BeginInteractOverlap(UPrimitiveComponent* OverlappedCompo
 
 void APlayerCharacter::EndInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (OtherActor == this)
+	{
+		return;
+	}
+
 	if (OtherActor == _currentInteractTarget)
 	{
 		_currentInteractTarget = nullptr;
@@ -347,7 +357,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	for (AActor* actor : collidingWith)
 	{
-		if (actor == _currentInteractTarget)
+		if (actor == _currentInteractTarget || actor == this)
 		{
 			continue;
 		}
