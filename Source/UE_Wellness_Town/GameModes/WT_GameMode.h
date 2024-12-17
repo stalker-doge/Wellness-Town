@@ -7,6 +7,7 @@
 #include "WT_GameMode.generated.h"
 
 class UNPC_Manager;
+class UTimeManager;
 class AJournal;
 
 UCLASS(Blueprintable)
@@ -18,7 +19,9 @@ public:
 	AWT_GameMode();
 
 	UNPC_Manager* GetNPCManager();
+	UTimeManager* GetTimeManager();
 
+	virtual void Tick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay() override;
 
@@ -27,4 +30,5 @@ private:
 	TObjectPtr<AJournal> _journal;
 
 	TObjectPtr<UNPC_Manager> _npcManager;
+	TObjectPtr<UTimeManager> _timeManager;
 };

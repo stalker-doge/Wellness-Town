@@ -4,6 +4,10 @@
 #include "NPC_Base.h"
 #include "UE_Wellness_Town/Characters/NPCs/NPC_Data.h"
 #include "UE_Wellness_Town/Dialogue/DialogueSystem.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/GOAP_Agent.h"
+#include "AIController.h"
+#include "Navigation/PathFollowingComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 ANPC_Base::ANPC_Base()
@@ -13,6 +17,25 @@ ANPC_Base::ANPC_Base()
 
 	_data = CreateDefaultSubobject<UNPC_Data>(TEXT("NPC Info"));
 	checkf(_data, TEXT("NPC is missing NPC_Data component"));
+
+	_agent = CreateDefaultSubobject<UGOAP_Agent>(TEXT("AI Agent"));
+	checkf(_agent, TEXT("NPC is missing GOAP_Agent component"));
+
+	_agent->Init();
+}
+
+void ANPC_Base::SetDestination(FVector destination)
+{
+	FAIMoveRequest moveTo;
+	moveTo.SetAcceptanceRadius(10);
+	moveTo.SetGoalLocation(destination);
+
+	_controller->MoveTo(moveTo);
+}
+
+bool ANPC_Base::HasPath()
+{
+	return _controller->IsFollowingAPath();
 }
 
 UNPC_Data* ANPC_Base::GetNPCData()
@@ -42,6 +65,7 @@ void ANPC_Base::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	_controller = Cast<AAIController>(GetController());
 }
 
 // Called every frame
