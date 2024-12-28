@@ -133,9 +133,9 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	_isWorkHours = (_timeManager->GetHours() >= 9 && _timeManager->GetHours() < 17);
 	_isSleepHours = (_timeManager->GetHours() >= 22 || _timeManager->GetHours() < 6);
 
-	GEngine->AddOnScreenDebugMessage(10, 5, FColor::Red, FString::Printf(TEXT("Current Action: %s"), _currentAction ? *_currentAction->_name : TEXT("NONE")));
-	GEngine->AddOnScreenDebugMessage(11, 5, FColor::Red, FString::Printf(TEXT("Work Hours: %s"), _isWorkHours ? TEXT("TRUE") : TEXT("FALSE")));
-	GEngine->AddOnScreenDebugMessage(12, 5, FColor::Red, FString::Printf(TEXT("Sleep Hours: %s"), _isSleepHours ? TEXT("TRUE") : TEXT("FALSE")));
+	//GEngine->AddOnScreenDebugMessage(10, 5, FColor::Red, FString::Printf(TEXT("Current Action: %s"), _currentAction ? *_currentAction->_name : TEXT("NONE")));
+	//GEngine->AddOnScreenDebugMessage(11, 5, FColor::Red, FString::Printf(TEXT("Work Hours: %s"), _isWorkHours ? TEXT("TRUE") : TEXT("FALSE")));
+	//GEngine->AddOnScreenDebugMessage(12, 5, FColor::Red, FString::Printf(TEXT("Sleep Hours: %s"), _isSleepHours ? TEXT("TRUE") : TEXT("FALSE")));
 
 	if (_currentAction == nullptr)
 	{
