@@ -22,23 +22,23 @@ public:
 	USleepingSystem();
 	~USleepingSystem();
 
-		enum class TimeOfDay
+	enum class TimeOfDay//enum for the time of day
 	{
 		Day,
 		Night
 	};
-		TimeOfDay CurrentTime;
+	TimeOfDay CurrentTime;//current time of day
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sleeping")//current day
 		int CurrentDay;
 
-	UFUNCTION(BlueprintCallable, Category = "Sleeping")
+	UFUNCTION(BlueprintCallable, Category = "Sleeping")//sets the current day
 	void SetCurrentDay(int NewDay);
 
-	UFUNCTION(BlueprintCallable, Category = "Sleeping")
+	UFUNCTION(BlueprintCallable, Category = "Sleeping")//gets the current day
 	int GetCurrentDay();
 
-	UFUNCTION(BlueprintCallable, Category = "Sleeping")
+	UFUNCTION(BlueprintCallable, Category = "Sleeping")//the actual sleeping function that changes the time of day
 	void Sleep();
 
 };
