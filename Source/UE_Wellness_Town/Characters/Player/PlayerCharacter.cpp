@@ -194,6 +194,11 @@ void APlayerCharacter::AltInteract()
 	_movementComponent->IsPushingActor()->AddForce(this);
 }
 
+AActor* APlayerCharacter::GetInteractTarget()
+{
+	return _currentInteractTarget;
+}
+
 float APlayerCharacter::GetMaxSpeed()
 {
 	return _movementComponent->MaxWalkSpeed;
@@ -211,6 +216,11 @@ void APlayerCharacter::DisableMovement()
 
 void APlayerCharacter::BeginInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OtherActor == this)
+	{
+		return;
+	}
+
 	if (_currentInteractTarget == nullptr)
 	{
 		_currentInteractTarget = OtherActor;
@@ -219,6 +229,11 @@ void APlayerCharacter::BeginInteractOverlap(UPrimitiveComponent* OverlappedCompo
 
 void APlayerCharacter::EndInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (OtherActor == this)
+	{
+		return;
+	}
+
 	if (OtherActor == _currentInteractTarget)
 	{
 		_currentInteractTarget = nullptr;
@@ -244,13 +259,6 @@ void APlayerCharacter::DrawTrajectory()
 		return;
 	}
 
-	for (TObjectPtr<AActor> splineMesh : _splineMeshes)
-	{
-		splineMesh->Destroy();
-	}
-
-	_splineMeshes.Empty();
-
 	_lastLocation = GetActorLocation();
 	_lastRotation = GetActorRotation();
 
@@ -265,8 +273,14 @@ void APlayerCharacter::DrawTrajectory()
 
 	for (int i = 0; i < _splineComponent->GetNumberOfSplinePoints(); i++)
 	{
-		TObjectPtr<AActor> mesh = GetWorld()->SpawnActor<AActor>(*_splineMesh, _splineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World), FRotator::ZeroRotator, spawnParams);
-		_splineMeshes.Add(mesh);
+		if (i >= _splineMeshes.Num() || _splineMeshes[i] == nullptr)
+		{
+			TObjectPtr<AActor> mesh = GetWorld()->SpawnActor<AActor>(*_splineMesh, _splineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World), FRotator::ZeroRotator, spawnParams);
+			_splineMeshes.Add(mesh);
+			continue;
+		}
+
+		_splineMeshes[i]->SetActorLocation(_splineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World));
 	}
 }
 
@@ -343,7 +357,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	for (AActor* actor : collidingWith)
 	{
-		if (actor == _currentInteractTarget)
+		if (actor == _currentInteractTarget || actor == this)
 		{
 			continue;
 		}
