@@ -29,6 +29,8 @@ public:
 	void SetupGoals();
 	void SetupActions();
 
+	void Reset();
+
 	void CalculateActionPlan();
 
 	void SetDestination(FVector destination);
@@ -73,4 +75,6 @@ public:
 	TObjectPtr<UTimeManager> _timeManager;
 	bool _isWorkHours;
 	bool _isSleepHours;
+
+	int _planFailCounter;
 };

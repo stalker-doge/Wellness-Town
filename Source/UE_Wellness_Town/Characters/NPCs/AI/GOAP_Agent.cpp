@@ -58,10 +58,24 @@ void UGOAP_Agent::SetupActions()
 void UGOAP_Agent::SetupGoals()
 {
 	_goals.Add(UGOAP_Goal::Builder(TEXT("WANDER")).WithPriority(1).AddDesiredEffect(_beliefs.FindChecked(TEXT("WANDER"))).Build());
-	_goals.Add(UGOAP_Goal::Builder(TEXT("WORK")).WithPriority(3).AddDesiredEffect(_beliefs.FindChecked(TEXT("NEED_TO_WORK"))).Build());
+	_goals.Add(UGOAP_Goal::Builder(TEXT("WORK")).WithPriority(30).AddDesiredEffect(_beliefs.FindChecked(TEXT("NEED_TO_WORK"))).Build());
 	_goals.Add(UGOAP_Goal::Builder(TEXT("SLEEP")).WithPriority(5).AddDesiredEffect(_beliefs.FindChecked(TEXT("NEED_TO_SLEEP"))).Build());
 }
 
+void UGOAP_Agent::Reset()
+{
+	_goals.Empty();
+	_beliefs.Empty();
+	_actions.Empty();
+
+	_planner = nullptr;
+
+	SetupBeliefs();
+	SetupActions();
+	SetupGoals();
+
+	_planner = NewObject<UGOAP_Planner>();
+}
 void UGOAP_Agent::CalculateActionPlan()
 {
 	int priorityLevel = (_currentGoal != nullptr) ? _currentGoal->_priority : 0;
@@ -133,7 +147,6 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	_isWorkHours = (_timeManager->GetHours() >= 9 && _timeManager->GetHours() < 17);
 	_isSleepHours = (_timeManager->GetHours() >= 22 || _timeManager->GetHours() < 6);
 
-	//GEngine->AddOnScreenDebugMessage(10, 5, FColor::Red, FString::Printf(TEXT("Current Action: %s"), _currentAction ? *_currentAction->_name : TEXT("NONE")));
 	//GEngine->AddOnScreenDebugMessage(11, 5, FColor::Red, FString::Printf(TEXT("Work Hours: %s"), _isWorkHours ? TEXT("TRUE") : TEXT("FALSE")));
 	//GEngine->AddOnScreenDebugMessage(12, 5, FColor::Red, FString::Printf(TEXT("Sleep Hours: %s"), _isSleepHours ? TEXT("TRUE") : TEXT("FALSE")));
 
@@ -164,7 +177,30 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 				_lastGoal = _currentGoal;
 				_currentGoal = nullptr;
 			}
+			else
+			{
+				_currentAction = _plan->actions.Pop();
+			}
 		}
+	}
+
+	if (_currentAction == nullptr)
+	{
+		_planFailCounter += 1;
+
+		GEngine->AddOnScreenDebugMessage(10, 5, FColor::Red, FString::Printf(TEXT("Counter: %i"), _planFailCounter));
+
+		if (_planFailCounter > 5)
+		{
+			Reset();
+		}
+
+		GEngine->AddOnScreenDebugMessage(11, 5, FColor::Red, FString::Printf(TEXT("Current Action: NONE")));
+	}
+	else
+	{
+		_planFailCounter = 0;
+		GEngine->AddOnScreenDebugMessage(12, 5, FColor::Red, FString::Printf(TEXT("Current Action: %s"), *_currentAction->_name));
 	}
 }
 
