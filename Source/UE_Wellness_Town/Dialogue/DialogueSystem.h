@@ -54,6 +54,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")//starts the dialogue
 	void StartDialogue();
 
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//starts the dialogue from a specific question
+		void StartDialogueQuestion(TArray<FString> Question);
+
+
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")//loads the next line of dialogue
 	void NextLine();
 
@@ -69,20 +73,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")//checks if the response is the dialogue wanted
 		bool CheckResponse(FString Response);
 
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//adds a line of dialogue
+		void AddDialogueLine(FString Line);
 
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//adds a line of dialogue for question 1
+		void AddDialogueQuestion1(FString Line);
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")  //custom event for starting dialogue
-	void OnDialogueStart();
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//adds a line of dialogue for question 2
+		void AddDialogueQuestion2(FString Line);
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")//custom event for ending dialogue
-	void OnDialogueEnd();
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//adds a line of dialogue for question 3
+		void AddDialogueQuestion3(FString Line);
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")//custom event for loading the next line of dialogue
-	void OnNextLine();
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//adds a line of dialogue for the player
+		void AddPlayerLine(FString Line);
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")//custom event for player dialogue
-	void OnPlayerDialogue();
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//Change next line of dialogue
+		void ChangeNextLine(FString Line);
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")//custom event for dialogue options
-	void OnDialogueOptions();
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")//Start dialogue from a custom line
+		void StartDialogueFromLine(FString Line);
 };
