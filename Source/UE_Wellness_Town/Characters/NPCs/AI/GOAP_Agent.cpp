@@ -62,6 +62,21 @@ void UGOAP_Agent::SetupGoals()
 	_goals.Add(UGOAP_Goal::Builder(TEXT("SLEEP")).WithPriority(5).AddDesiredEffect(_beliefs.FindChecked(TEXT("NEED_TO_SLEEP"))).Build());
 }
 
+AActor* UGOAP_Agent::GetHome()
+{
+	return _home;
+}
+
+AActor* UGOAP_Agent::GetWorkPlace()
+{
+	return _workPlace;
+}
+
+AActor* UGOAP_Agent::GetWorkDirectionTarget()
+{
+	return _workDirectionTarget;
+}
+
 void UGOAP_Agent::Reset()
 {
 	_goals.Empty();
@@ -104,6 +119,11 @@ void UGOAP_Agent::SetDestination(FVector destination)
 	_owner->SetDestination(destination);
 }
 
+void UGOAP_Agent::SetActorLookAt(AActor* target)
+{
+	_owner->LookAtTarget(target);
+}
+
 FVector UGOAP_Agent::GetActorLocation()
 {
 	return _owner->GetActorLocation();
@@ -112,6 +132,11 @@ FVector UGOAP_Agent::GetActorLocation()
 FVector UGOAP_Agent::GetForwardVector()
 {
 	return _owner->GetActorForwardVector();;
+}
+
+USkeletalMeshComponent* UGOAP_Agent::GetMesh()
+{
+	return _owner->GetMesh();
 }
 
 bool UGOAP_Agent::HasPath()

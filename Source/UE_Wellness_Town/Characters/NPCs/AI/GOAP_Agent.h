@@ -29,13 +29,21 @@ public:
 	void SetupGoals();
 	void SetupActions();
 
+	AActor* GetHome();
+	AActor* GetWorkPlace();
+	AActor* GetWorkDirectionTarget();
+
 	void Reset();
 
 	void CalculateActionPlan();
 
 	void SetDestination(FVector destination);
+	void SetActorLookAt(AActor* target);
+
 	FVector GetActorLocation();
 	FVector GetForwardVector();
+
+	USkeletalMeshComponent* GetMesh();
 
 	bool HasPath();
 	// Called every frame
@@ -45,6 +53,13 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AActor> _home;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AActor> _workPlace;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AActor> _workDirectionTarget;
 
 	TObjectPtr<ANPC_Base> _owner;
 	TObjectPtr<UGOAP_NPCSensor> _npcSensor;

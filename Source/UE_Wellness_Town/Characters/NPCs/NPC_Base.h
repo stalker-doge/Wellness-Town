@@ -23,6 +23,7 @@ public:
 	// Sets default values for this character's properties
 	ANPC_Base();
 
+	void LookAtTarget(AActor* target);
 	void SetDestination(FVector destination);
 	bool HasPath();
 

@@ -8,6 +8,7 @@
 #include "AIController.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ANPC_Base::ANPC_Base()
@@ -22,6 +23,11 @@ ANPC_Base::ANPC_Base()
 	checkf(_agent, TEXT("NPC is missing GOAP_Agent component"));
 
 	_agent->Init();
+}
+
+void ANPC_Base::LookAtTarget(AActor* target)
+{
+	SetActorRelativeRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), target->GetActorLocation()));
 }
 
 void ANPC_Base::SetDestination(FVector destination)
