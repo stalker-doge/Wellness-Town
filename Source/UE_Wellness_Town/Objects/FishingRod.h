@@ -10,6 +10,7 @@
 class USplineComponent;
 class APlayerCharacter;
 class ADestroyOnCollisionActor;
+class ANPC_Base;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API AFishingRod : public AItem
@@ -22,8 +23,9 @@ public:
 
 	void InitFishing();
 	void CatchLoot();
-	virtual bool ItemCast(AActor* player, USplineComponent* path) override;
+	virtual bool ItemCast(AActor* player, USplineComponent* path, bool isPlayer) override;
 
+	bool IsFishing();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 protected:
@@ -34,10 +36,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<ADestroyOnCollisionActor>> _loot;
 
-	TObjectPtr<APlayerCharacter> _player;
+	TObjectPtr<AActor> _owner;
 
 	FVector _end;
 
 	bool _isFishing;
+	bool _isPlayer;
 	float _timer;
 };

@@ -89,7 +89,7 @@ void APlayerCharacter::CastHeldItem()
 
 	if (_heldObject->DisplaySpline() == false)
 	{
-		bool success = _heldObject->ItemCast(this, nullptr);
+		bool success = _heldObject->ItemCast(this, nullptr, true);
 		return;
 	}
 
@@ -99,11 +99,10 @@ void APlayerCharacter::CastHeldItem()
 		FVector unitDirection = GetActorForwardVector() + GetActorUpVector();
 		unitDirection.Normalize();
 
-
 		CreateSpline(GetMesh()->GetSocketLocation("HoldSocket"), unitDirection, _throwStrength, 2, true);
 	}
 
-	bool success = _heldObject->ItemCast(this, _splineComponent);
+	bool success = _heldObject->ItemCast(this, _splineComponent, true);
 
 	_splineComponent->ClearSplinePoints();
 

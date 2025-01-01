@@ -18,7 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	ABugNet();
 
-	virtual bool ItemCast(AActor* player, USplineComponent* path) override;
+	virtual bool ItemCast(AActor* player, USplineComponent* path, bool isPlayer) override;
 	virtual void DisableCollision() override;
 
 	// Called every frame

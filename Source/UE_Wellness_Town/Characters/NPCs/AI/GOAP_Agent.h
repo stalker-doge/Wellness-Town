@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/WorkType.h"
 #include "GOAP_Agent.generated.h"
 
 class ANPC_Base;
@@ -14,6 +15,7 @@ class UGOAP_Action;
 class UGOAP_Plan;
 class UGOAP_NPCSensor;
 class UTimeManager;
+class AFishingRod;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UE_WELLNESS_TOWN_API UGOAP_Agent : public UActorComponent
@@ -30,10 +32,21 @@ public:
 	void SetupActions();
 
 	AActor* GetHome();
+	void SetIsAtHome(bool val);
+	bool IsAtHome();
+
 	AActor* GetWorkPlace();
-	AActor* GetWorkDirectionTarget();
+	WorkType GetWorkType();
+	void SetIsAtWorkPlace(bool val);
+	bool IsAtWorkPlace();
+
+	TSubclassOf<AFishingRod> GetFishingRodDefault();
 
 	void Reset();
+	UFUNCTION(BlueprintCallable)
+	void SetPauseAgent(bool val);
+	UFUNCTION(BlueprintCallable)
+	void TogglePauseAgent();
 
 	void CalculateActionPlan();
 
@@ -46,6 +59,8 @@ public:
 	USkeletalMeshComponent* GetMesh();
 
 	bool HasPath();
+
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 protected:
@@ -56,10 +71,13 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AActor> _home;
+
+	UPROPERTY(EditAnywhere)
+	WorkType _workType;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AActor> _workPlace;
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<AActor> _workDirectionTarget;
+	TSubclassOf<AFishingRod> _fishingRodDefault;
 
 	TObjectPtr<ANPC_Base> _owner;
 	TObjectPtr<UGOAP_NPCSensor> _npcSensor;
@@ -91,5 +109,11 @@ public:
 	bool _isWorkHours;
 	bool _isSleepHours;
 
+	bool _isAtHome;
+
+	bool _isWorking;
+	bool _isAtWorkPlace;
+
 	int _planFailCounter;
+	bool _isPaused;
 };

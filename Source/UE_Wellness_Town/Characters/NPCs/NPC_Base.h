@@ -13,6 +13,8 @@ class APlayerCharacter;
 class UDialogueSystem;
 class UGOAP_Agent;
 class UStaticMeshComponent;
+class AItem;
+class USplineComponent;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API ANPC_Base : public ACharacter, public IInteractable
@@ -23,9 +25,18 @@ public:
 	// Sets default values for this character's properties
 	ANPC_Base();
 
+	void UseItem(USplineComponent* path);
+
 	void LookAtTarget(AActor* target);
 	void SetDestination(FVector destination);
+	void PauseMovement();
+	void ResumeMovement();
 	bool HasPath();
+
+	void PickUp(AItem* item);
+	void DropItem();
+
+	USplineComponent* GetSplineComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	UNPC_Data* GetNPCData();
@@ -57,4 +68,10 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AAIController> _controller;
+
+	UPROPERTY()
+	TObjectPtr<AItem> _heldObject;
+
+	UPROPERTY()
+	TObjectPtr<USplineComponent> _splineComponent;
 };

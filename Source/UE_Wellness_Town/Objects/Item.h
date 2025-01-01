@@ -10,6 +10,7 @@
 class APlayerCharacter;
 class UStaticMeshComponent;
 class USplineComponent;
+class ANPC_Base;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API AItem : public AActor, public IInteractable
@@ -29,7 +30,7 @@ public:
 	bool DisplaySpline() { return _displaySpline; };
 
 	virtual void Interact(APlayerCharacter* player) override;
-	virtual bool ItemCast(AActor* player, USplineComponent* path);
+	virtual bool ItemCast(AActor* player, USplineComponent* path, bool isPlayer);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

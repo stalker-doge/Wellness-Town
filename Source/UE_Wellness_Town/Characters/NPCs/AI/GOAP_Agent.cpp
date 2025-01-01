@@ -16,6 +16,11 @@
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/TalkStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/WorkStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/SleepStrategy.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/TravelToWorkStrategy.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/TravelToHomeStrategy.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/FishingWorkStrategy.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/WorkType.h"
+
 //#include "UE_Wellness_Town/Characters/NPCs/AI/Sensors/GOAP_NPCSensor.h"
 //#include "Components/SphereComponent.h"
 
@@ -44,22 +49,44 @@ void UGOAP_Agent::SetupBeliefs()
 	factory->Init(&_beliefs);
 
 	factory->AddBelief(TEXT("WANDER"), [&] { return false; });
-	factory->AddBelief(TEXT("NEED_TO_WORK"), [&] { return !_isWorkHours; });
-	factory->AddBelief(TEXT("NEED_TO_SLEEP"), [&] { return !_isSleepHours; });
+
+	factory->AddBelief(TEXT("WORKING"), [&] { return _isAtWorkPlace; });
+	factory->AddBelief(TEXT("IS_AT_WORKPLACE"), [&] { return _isAtWorkPlace; });
+	factory->AddBelief(TEXT("NEED_TO_WORK"), [&] { return _isWorkHours; });
+
+	factory->AddBelief(TEXT("SLEEPING"), [&] { return _isAtHome; });
+	factory->AddBelief(TEXT("NEED_TO_SLEEP"), [&] { return _isSleepHours; });
+
+	factory->AddBelief(TEXT("IS_AT_HOME"), [&] { return _isAtHome; });
 }
 
 void UGOAP_Agent::SetupActions()
 {
 	_actions.Add(UGOAP_Action::Builder(TEXT("WANDER")).WithStrategy(NewObject<UWanderStrategy>()).AddEffect(_beliefs.FindChecked(TEXT("WANDER"))).Build());
-	_actions.Add(UGOAP_Action::Builder(TEXT("WORK")).WithStrategy(NewObject<UWorkStrategy>()).AddEffect(_beliefs.FindChecked(TEXT("NEED_TO_WORK"))).Build());
-	_actions.Add(UGOAP_Action::Builder(TEXT("SLEEP")).WithStrategy(NewObject<USleepStrategy>()).AddEffect(_beliefs.FindChecked(TEXT("NEED_TO_SLEEP"))).Build());
+
+	switch (_workType)
+	{
+	case WorkType::Fishing:
+		_actions.Add(UGOAP_Action::Builder(TEXT("WORK")).WithStrategy(NewObject<UFishingWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).AddEffect(_beliefs.FindChecked(TEXT("WORKING"))).Build());
+		break;
+	case WorkType::Trading:
+		_actions.Add(UGOAP_Action::Builder(TEXT("WORK")).WithStrategy(NewObject<UWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).AddEffect(_beliefs.FindChecked(TEXT("WORKING"))).Build());
+		break;
+	default:
+		break;
+	}
+	
+	_actions.Add(UGOAP_Action::Builder(TEXT("TRAVEL_TO_WORK")).WithStrategy(NewObject<UTravelToWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("NEED_TO_WORK"))).AddEffect(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).Build());
+
+	_actions.Add(UGOAP_Action::Builder(TEXT("SLEEP")).WithStrategy(NewObject<USleepStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_HOME"))).AddEffect(_beliefs.FindChecked(TEXT("SLEEPING"))).Build());
+	_actions.Add(UGOAP_Action::Builder(TEXT("TRAVEL_TO_HOME")).WithStrategy(NewObject<UTravelToHomeStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("NEED_TO_SLEEP"))).AddEffect(_beliefs.FindChecked(TEXT("IS_AT_HOME"))).Build());
 }
 
 void UGOAP_Agent::SetupGoals()
 {
 	_goals.Add(UGOAP_Goal::Builder(TEXT("WANDER")).WithPriority(1).AddDesiredEffect(_beliefs.FindChecked(TEXT("WANDER"))).Build());
-	_goals.Add(UGOAP_Goal::Builder(TEXT("WORK")).WithPriority(30).AddDesiredEffect(_beliefs.FindChecked(TEXT("NEED_TO_WORK"))).Build());
-	_goals.Add(UGOAP_Goal::Builder(TEXT("SLEEP")).WithPriority(5).AddDesiredEffect(_beliefs.FindChecked(TEXT("NEED_TO_SLEEP"))).Build());
+	_goals.Add(UGOAP_Goal::Builder(TEXT("WORK")).WithPriority(3).AddDesiredEffect(_beliefs.FindChecked(TEXT("WORKING"))).Build());
+	_goals.Add(UGOAP_Goal::Builder(TEXT("SLEEP")).WithPriority(5).AddDesiredEffect(_beliefs.FindChecked(TEXT("SLEEPING"))).Build());
 }
 
 AActor* UGOAP_Agent::GetHome()
@@ -67,14 +94,24 @@ AActor* UGOAP_Agent::GetHome()
 	return _home;
 }
 
+void UGOAP_Agent::SetIsAtHome(bool val)
+{
+	_isAtHome = val;
+}
+
+bool UGOAP_Agent::IsAtHome()
+{
+	return _isAtHome;
+}
+
 AActor* UGOAP_Agent::GetWorkPlace()
 {
 	return _workPlace;
 }
 
-AActor* UGOAP_Agent::GetWorkDirectionTarget()
+WorkType UGOAP_Agent::GetWorkType()
 {
-	return _workDirectionTarget;
+	return _workType;
 }
 
 void UGOAP_Agent::Reset()
@@ -90,6 +127,28 @@ void UGOAP_Agent::Reset()
 	SetupGoals();
 
 	_planner = NewObject<UGOAP_Planner>();
+}
+void UGOAP_Agent::SetPauseAgent(bool val)
+{
+	if (_isPaused == val)
+	{
+		return;
+	}
+
+	_isPaused = val;
+
+	if (_isPaused == true)
+	{
+		_owner->PauseMovement();
+	}
+	else
+	{
+		_owner->ResumeMovement();
+	}
+}
+void UGOAP_Agent::TogglePauseAgent()
+{
+	SetPauseAgent(!_isPaused);
 }
 void UGOAP_Agent::CalculateActionPlan()
 {
@@ -144,6 +203,20 @@ bool UGOAP_Agent::HasPath()
 	return _owner->HasPath();
 }
 
+void UGOAP_Agent::SetIsAtWorkPlace(bool val)
+{
+	_isAtWorkPlace = val;
+}
+
+bool UGOAP_Agent::IsAtWorkPlace()
+{
+	return _isAtWorkPlace;
+}
+
+TSubclassOf<AFishingRod> UGOAP_Agent::GetFishingRodDefault()
+{
+	return _fishingRodDefault;
+}
 
 // Called when the game starts
 void UGOAP_Agent::BeginPlay()
@@ -169,11 +242,13 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (_isPaused == true)
+	{
+		return;
+	}
+
 	_isWorkHours = (_timeManager->GetHours() >= 9 && _timeManager->GetHours() < 17);
 	_isSleepHours = (_timeManager->GetHours() >= 22 || _timeManager->GetHours() < 6);
-
-	//GEngine->AddOnScreenDebugMessage(11, 5, FColor::Red, FString::Printf(TEXT("Work Hours: %s"), _isWorkHours ? TEXT("TRUE") : TEXT("FALSE")));
-	//GEngine->AddOnScreenDebugMessage(12, 5, FColor::Red, FString::Printf(TEXT("Sleep Hours: %s"), _isSleepHours ? TEXT("TRUE") : TEXT("FALSE")));
 
 	if (_currentAction == nullptr)
 	{
@@ -205,6 +280,7 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 			else
 			{
 				_currentAction = _plan->actions.Pop();
+				_currentAction->Start(this);
 			}
 		}
 	}
@@ -225,7 +301,7 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	else
 	{
 		_planFailCounter = 0;
-		GEngine->AddOnScreenDebugMessage(12, 5, FColor::Red, FString::Printf(TEXT("Current Action: %s"), *_currentAction->_name));
+		GEngine->AddOnScreenDebugMessage(11, 5, FColor::Red, FString::Printf(TEXT("Current Action: %s"), *_currentAction->_name));
 	}
 }
 

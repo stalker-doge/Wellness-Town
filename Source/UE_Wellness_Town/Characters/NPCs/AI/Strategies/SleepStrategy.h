@@ -21,12 +21,8 @@ public:
 	virtual bool Complete() override;
 
 private:
-	bool IsAtHome();
 	void ToggleSleep(bool isSleeping);
 
 private:
 	TObjectPtr<UGOAP_Agent> _agent;
-	TObjectPtr<AActor> _home;
-
-	bool _isSleeping;
 };

@@ -18,7 +18,7 @@ ABugNet::ABugNet()
 	_displaySpline = false;
 }
 
-bool ABugNet::ItemCast(AActor* player, USplineComponent* path)
+bool ABugNet::ItemCast(AActor* player, USplineComponent* path, bool isPlayer)
 {
 	TArray<AActor*> overlappingActors;
 	_collisionSphere->GetOverlappingActors(overlappingActors, ABug::StaticClass());
