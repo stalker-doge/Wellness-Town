@@ -6,9 +6,8 @@
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/AbstractStrategy.h"
 #include "SleepStrategy.generated.h"
 
-/**
- * 
- */
+class UGOAP_Agent;
+
 UCLASS()
 class UE_WELLNESS_TOWN_API USleepStrategy : public UAbstractStrategy
 {
@@ -20,6 +19,9 @@ public:
 	virtual void Stop() override;
 
 	virtual bool Complete() override;
+
+private:
+	void ToggleSleep(bool isSleeping);
 
 private:
 	TObjectPtr<UGOAP_Agent> _agent;

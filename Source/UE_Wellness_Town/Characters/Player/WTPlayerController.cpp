@@ -8,10 +8,14 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "PlayerCharacter.h"
+#include "GameFramework/SpringArmComponent.h"
 
-//void AWTPlayerController::HandleLook(const FInputActionValue& value)
-//{
-//}
+void AWTPlayerController::HandleLook(const FInputActionValue& value)
+{
+	const float movementVector = value.Get<float>();
+
+	_playerCharacter->GetSpringArm()->AddLocalRotation(FRotator(0, movementVector, 0));
+}
 
 void AWTPlayerController::HandleMove(const FInputActionValue& value)
 {
@@ -94,6 +98,9 @@ void AWTPlayerController::OnUnPossess()
 
 void AWTPlayerController::BindActions(UEnhancedInputComponent* inputComponent)
 {
+	checkf(actionLook, TEXT("Missing Look Action"));
+	inputComponent->BindAction(actionLook, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleLook);
+
 	checkf(actionMove, TEXT("Missing Move Action"));
 	inputComponent->BindAction(actionMove, ETriggerEvent::Triggered, this, &AWTPlayerController::HandleMove);
 

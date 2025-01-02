@@ -7,14 +7,17 @@
 void UWorkStrategy::Start(UGOAP_Agent* agent)
 {
 	_agent = agent;
+	_workPlace = _agent->GetWorkPlace();
 }
 
 void UWorkStrategy::Update(float deltaTime)
 {
+	GEngine->AddOnScreenDebugMessage(20, 1, FColor::Blue, FString::Printf(TEXT("Working")));
 }
 
 void UWorkStrategy::Stop()
 {
+	_agent->SetIsAtWorkPlace(false);
 }
 
 bool UWorkStrategy::Complete()

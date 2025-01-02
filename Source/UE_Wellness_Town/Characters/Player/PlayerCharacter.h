@@ -36,6 +36,8 @@ public:
 	void Interact();
 	void AltInteract();
 
+	USpringArmComponent* GetSpringArm();
+
 	UFUNCTION(BlueprintCallable)
 	AActor* GetInteractTarget();
 
@@ -77,8 +79,6 @@ private:
 	TObjectPtr<UCameraComponent> _camera;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USpringArmComponent> _springArmComponent;
-
-	
 
 	UPROPERTY()
 	TObjectPtr<UPlayerMovementComponent> _movementComponent;
