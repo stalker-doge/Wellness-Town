@@ -78,8 +78,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USpringArmComponent> _springArmComponent;
 
-	
-
 	UPROPERTY()
 	TObjectPtr<UPlayerMovementComponent> _movementComponent;
 

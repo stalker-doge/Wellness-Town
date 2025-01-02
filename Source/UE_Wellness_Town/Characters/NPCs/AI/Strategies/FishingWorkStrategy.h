@@ -4,11 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/AbstractStrategy.h"
-#include "WorkStrategy.generated.h"
+#include "FishingWorkStrategy.generated.h"
+
 class UGOAP_Agent;
+class ANPC_Base;
+class AFishingRod;
+class USplineComponent;
 
 UCLASS()
-class UE_WELLNESS_TOWN_API UWorkStrategy : public UAbstractStrategy
+class UE_WELLNESS_TOWN_API UFishingWorkStrategy : public UAbstractStrategy
 {
 	GENERATED_BODY()
 	
@@ -20,6 +24,21 @@ public:
 	virtual bool Complete() override;
 
 private:
+	void CreateSpline();
+	void CastRod();
+
+private:
+	UPROPERTY()
 	TObjectPtr<UGOAP_Agent> _agent;
-	TObjectPtr<AActor> _workPlace;
+	UPROPERTY()
+	TObjectPtr<ANPC_Base> _npc;
+
+	UPROPERTY()
+	TObjectPtr<AFishingRod> _fishingRod;
+
+	UPROPERTY()
+	TObjectPtr<USplineComponent> _splineComponent;
+
+	float _actionTimer;
+	float _actionDelay;
 };

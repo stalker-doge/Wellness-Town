@@ -23,7 +23,6 @@ void AFishingRod::InitFishing()
 
 void AFishingRod::CatchLoot()
 {
-	_isFishing = false;
 	//Generates which loot will be spawned, will be changed to a random value when more is added
 	TSubclassOf<ADestroyOnCollisionActor> toSpawn = _loot[0];
 
@@ -32,10 +31,10 @@ void AFishingRod::CatchLoot()
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	TObjectPtr<ADestroyOnCollisionActor> loot = GetWorld()->SpawnActor<ADestroyOnCollisionActor>(*toSpawn, _end, FRotator::ZeroRotator, spawnParams);
-	loot->SetCollisionTarget(_player);
+	loot->SetCollisionTarget(_owner);
 
 	//Faces the loot towards the player
-	FVector dir = _player->GetActorLocation() - loot->GetActorLocation();
+	FVector dir = _owner->GetActorLocation() - loot->GetActorLocation();
 	FRotator angle = dir.Rotation();
 	loot->SetActorRotation(angle);
 
@@ -47,15 +46,21 @@ void AFishingRod::CatchLoot()
 	staticMeshComponent->SetSimulatePhysics(true);
 	staticMeshComponent->SetPhysicsLinearVelocity(unitDirection * 1000);
 
-	_player->EnableMovement();
-	_player = nullptr;
+	if (_isPlayer == true)
+	{
+		Cast<APlayerCharacter>(_owner)->EnableMovement();
+	}
+
+	_owner = nullptr;
+	_isFishing = false;
 }
 
-bool AFishingRod::ItemCast(AActor* player, USplineComponent* path)
+bool AFishingRod::ItemCast(AActor* player, USplineComponent* path, bool isPlayer)
 {
-	AItem::ItemCast(player, path);
+	_owner = player;
+	_isPlayer = isPlayer;
 
-	_player = Cast<APlayerCharacter>(player);
+	AItem::ItemCast(player, path, isPlayer);
 
 	TArray<AActor*> hitData;
 	TArray<AActor*> toIgnore;
@@ -80,7 +85,12 @@ bool AFishingRod::ItemCast(AActor* player, USplineComponent* path)
 				}
 
 				_end = path->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
-				_player->DisableMovement();
+
+				if (_isPlayer == true)
+				{
+					Cast<APlayerCharacter>(_owner)->DisableMovement();
+				}
+
 				InitFishing();
 				return true;
 			}
@@ -88,6 +98,11 @@ bool AFishingRod::ItemCast(AActor* player, USplineComponent* path)
 	}
 
 	return false;
+}
+
+bool AFishingRod::IsFishing()
+{
+	return _isFishing;
 }
 
 // Called when the game starts or when spawned
