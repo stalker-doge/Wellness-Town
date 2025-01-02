@@ -33,6 +33,9 @@ public:
 	void ResumeMovement();
 	bool HasPath();
 
+	void PauseAI();
+	void ResumeAI();
+
 	void PickUp(AItem* item);
 	void DropItem();
 

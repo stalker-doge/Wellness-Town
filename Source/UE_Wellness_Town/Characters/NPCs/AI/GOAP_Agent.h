@@ -16,6 +16,7 @@ class UGOAP_Plan;
 class UGOAP_NPCSensor;
 class UTimeManager;
 class AFishingRod;
+class ABugNet;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UE_WELLNESS_TOWN_API UGOAP_Agent : public UActorComponent
@@ -41,6 +42,7 @@ public:
 	bool IsAtWorkPlace();
 
 	TSubclassOf<AFishingRod> GetFishingRodDefault();
+	TSubclassOf<ABugNet> GetBugNetDefault();
 
 	void Reset();
 	UFUNCTION(BlueprintCallable)
@@ -78,6 +80,8 @@ public:
 	TObjectPtr<AActor> _workPlace;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AFishingRod> _fishingRodDefault;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABugNet> _bugNetDefault;
 
 	TObjectPtr<ANPC_Base> _owner;
 	TObjectPtr<UGOAP_NPCSensor> _npcSensor;

@@ -69,6 +69,16 @@ bool ANPC_Base::HasPath()
 	return _controller->IsFollowingAPath();
 }
 
+void ANPC_Base::PauseAI()
+{
+	_agent->SetPauseAgent(true);
+}
+
+void ANPC_Base::ResumeAI()
+{
+	_agent->SetPauseAgent(false);
+}
+
 void ANPC_Base::PickUp(AItem* item)
 {
 	if (_heldObject != nullptr)

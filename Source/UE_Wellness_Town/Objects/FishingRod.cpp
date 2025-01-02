@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UE_Wellness_Town/Characters/Player/PlayerCharacter.h"
+#include "UE_Wellness_Town/Characters/NPCs/NPC_Base.h"
 #include "UE_Wellness_Town/Objects/DestroyOnCollisionActor.h"
 
 // Sets default values
@@ -46,13 +47,7 @@ void AFishingRod::CatchLoot()
 	staticMeshComponent->SetSimulatePhysics(true);
 	staticMeshComponent->SetPhysicsLinearVelocity(unitDirection * 1000);
 
-	if (_isPlayer == true)
-	{
-		Cast<APlayerCharacter>(_owner)->EnableMovement();
-	}
-
-	_owner = nullptr;
-	_isFishing = false;
+	_lootSpawned = true;
 }
 
 bool AFishingRod::ItemCast(AActor* player, USplineComponent* path, bool isPlayer)
@@ -79,6 +74,8 @@ bool AFishingRod::ItemCast(AActor* player, USplineComponent* path, bool isPlayer
 		{
 			for (AActor* data : hitData)
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, data->GetName());
+
 				if (data->Tags.Contains("Water") == false)
 				{
 					return false;
@@ -89,6 +86,10 @@ bool AFishingRod::ItemCast(AActor* player, USplineComponent* path, bool isPlayer
 				if (_isPlayer == true)
 				{
 					Cast<APlayerCharacter>(_owner)->DisableMovement();
+				}
+				else
+				{
+					Cast<ANPC_Base>(_owner)->PauseAI();
 				}
 
 				InitFishing();
@@ -126,7 +127,26 @@ void AFishingRod::Tick(float DeltaTime)
 
 	if (_timer >= 3)
 	{
-		CatchLoot();
+		if (_lootSpawned == false)
+		{
+			CatchLoot();
+		}
+	}
+
+	if (_timer >= 5)
+	{
+		if (_isPlayer == true)
+		{
+			Cast<APlayerCharacter>(_owner)->EnableMovement();
+		}
+		else
+		{
+			Cast<ANPC_Base>(_owner)->ResumeAI();
+		}
+
+		_owner = nullptr;
+		_lootSpawned = false;
+		_isFishing = false;
 		_timer = 0;
 	}
 }

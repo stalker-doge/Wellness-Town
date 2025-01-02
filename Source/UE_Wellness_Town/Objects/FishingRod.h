@@ -42,5 +42,6 @@ private:
 
 	bool _isFishing;
 	bool _isPlayer;
+	bool _lootSpawned;
 	float _timer;
 };

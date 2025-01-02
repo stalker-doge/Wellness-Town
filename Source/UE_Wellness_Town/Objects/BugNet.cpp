@@ -32,12 +32,6 @@ bool ABugNet::ItemCast(AActor* player, USplineComponent* path, bool isPlayer)
 	return true;
 }
 
-void ABugNet::DisableCollision()
-{
-	_staticMesh->SetSimulatePhysics(false);
-	_staticMesh->SetCollisionProfileName(FName("NoCollision"));
-}
-
 void ABugNet::BeginPlay()
 {
 	Super::BeginPlay();

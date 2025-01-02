@@ -19,7 +19,6 @@ public:
 	ABugNet();
 
 	virtual bool ItemCast(AActor* player, USplineComponent* path, bool isPlayer) override;
-	virtual void DisableCollision() override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

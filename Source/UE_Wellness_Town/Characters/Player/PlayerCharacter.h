@@ -36,6 +36,8 @@ public:
 	void Interact();
 	void AltInteract();
 
+	USpringArmComponent* GetSpringArm();
+
 	UFUNCTION(BlueprintCallable)
 	AActor* GetInteractTarget();
 

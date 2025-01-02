@@ -193,6 +193,11 @@ void APlayerCharacter::AltInteract()
 	_movementComponent->IsPushingActor()->AddForce(this);
 }
 
+USpringArmComponent* APlayerCharacter::GetSpringArm()
+{
+	return _springArmComponent;
+}
+
 AActor* APlayerCharacter::GetInteractTarget()
 {
 	return _currentInteractTarget;

@@ -19,10 +19,10 @@
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/TravelToWorkStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/TravelToHomeStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/FishingWorkStrategy.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/BugCatcherWorkStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/WorkType.h"
 
 //#include "UE_Wellness_Town/Characters/NPCs/AI/Sensors/GOAP_NPCSensor.h"
-//#include "Components/SphereComponent.h"
 
 // Sets default values for this component's properties
 UGOAP_Agent::UGOAP_Agent()
@@ -71,6 +71,9 @@ void UGOAP_Agent::SetupActions()
 		break;
 	case WorkType::Trading:
 		_actions.Add(UGOAP_Action::Builder(TEXT("WORK")).WithStrategy(NewObject<UWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).AddEffect(_beliefs.FindChecked(TEXT("WORKING"))).Build());
+		break;
+	case WorkType::BugCatching:
+		_actions.Add(UGOAP_Action::Builder(TEXT("WORK")).WithStrategy(NewObject<UBugCatcherWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).AddEffect(_beliefs.FindChecked(TEXT("WORKING"))).Build());
 		break;
 	default:
 		break;
@@ -216,6 +219,11 @@ bool UGOAP_Agent::IsAtWorkPlace()
 TSubclassOf<AFishingRod> UGOAP_Agent::GetFishingRodDefault()
 {
 	return _fishingRodDefault;
+}
+
+TSubclassOf<ABugNet> UGOAP_Agent::GetBugNetDefault()
+{
+	return _bugNetDefault;
 }
 
 // Called when the game starts

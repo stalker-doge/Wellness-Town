@@ -10,5 +10,6 @@ UENUM(BlueprintType)
 enum class WorkType : uint8
 {
 	Fishing UMETA(DisplayName = "Fishing"),
-	Trading UMETA(DisplayName = "Trading")
+	Trading UMETA(DisplayName = "Trading"),
+	BugCatching UMETA(DisplayName = "BugCatching")
 };
