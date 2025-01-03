@@ -28,7 +28,9 @@ public:
 	UGOAP_Agent();
 
 	void Init();
-	ANPC_Base* GetNPC();
+	void SetupBeliefs();
+	void SetupGoals();
+	void SetupActions();
 
 	AActor* GetHome();
 	void SetIsAtHome(bool val);
@@ -42,12 +44,17 @@ public:
 	TSubclassOf<AFishingRod> GetFishingRodDefault();
 	TSubclassOf<ABugNet> GetBugNetDefault();
 
+	void Reset();
+	UFUNCTION(BlueprintCallable)
 	void SetPauseAgent(bool val);
+	UFUNCTION(BlueprintCallable)
 	void TogglePauseAgent();
 
-	void SetDestination(FVector destination);
+	void CalculateActionPlan();
 
-	FVector GetCurrentDestination();
+	void SetDestination(FVector destination);
+	void SetActorLookAt(AActor* target);
+
 	FVector GetActorLocation();
 	FVector GetForwardVector();
 
@@ -62,15 +69,8 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-private:
-	void SetupBeliefs();
-	void SetupGoals();
-	void SetupActions();
-
-	void Reset();
-	void CalculateActionPlan();
-
 public:
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AActor> _home;
 
@@ -84,13 +84,13 @@ public:
 	TSubclassOf<ABugNet> _bugNetDefault;
 
 	TObjectPtr<ANPC_Base> _owner;
-	//TObjectPtr<UGOAP_NPCSensor> _npcSensor;
+	TObjectPtr<UGOAP_NPCSensor> _npcSensor;
 
 	UPROPERTY()
 	TMap<FString, TObjectPtr<UGOAP_Belief>> _beliefs;
 
-	//TObjectPtr<UGOAP_Agent> _talkingTo;
-	//bool _canTalk;
+	TObjectPtr<UGOAP_Agent> _talkingTo;
+	bool _canTalk;
 
 	UPROPERTY()
 	TObjectPtr<UGOAP_Goal> _currentGoal;
@@ -110,7 +110,6 @@ public:
 	TObjectPtr<UGOAP_Planner> _planner;
 
 	TObjectPtr<UTimeManager> _timeManager;
-
 	bool _isWorkHours;
 	bool _isSleepHours;
 

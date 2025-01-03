@@ -34,11 +34,6 @@ void UBugCatcherWorkStrategy::Start(UGOAP_Agent* agent)
 
 void UBugCatcherWorkStrategy::Update(float deltaTime)
 {
-	if (_npc->GetMesh()->IsVisible() == false)
-	{
-		return;
-	}
-
 	_timer += deltaTime;
 
 	if (_timer < 0.2)

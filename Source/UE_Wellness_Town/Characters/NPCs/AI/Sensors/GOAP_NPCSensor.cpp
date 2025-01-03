@@ -30,10 +30,10 @@ void UGOAP_NPCSensor::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		return;
 	}
 
-	/*if (_agent->_talkingTo != nullptr)
+	if (_agent->_talkingTo != nullptr)
 	{
 		return;
-	}*/
+	}
 
 	UGOAP_Agent* agent = Cast<UGOAP_Agent>(OtherActor);
 
@@ -42,7 +42,7 @@ void UGOAP_NPCSensor::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		return;
 	}
 
-	/*if (agent->_talkingTo != nullptr)
+	if (agent->_talkingTo != nullptr)
 	{
 		return;
 	}
@@ -51,7 +51,7 @@ void UGOAP_NPCSensor::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	{
 		_agent->_talkingTo = agent;
 		agent->_talkingTo = _agent;
-	}*/
+	}
 }
 
 void UGOAP_NPCSensor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

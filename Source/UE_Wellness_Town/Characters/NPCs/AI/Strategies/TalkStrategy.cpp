@@ -9,11 +9,11 @@ void UTalkStrategy::Start(UGOAP_Agent* agent)
 	_timer = 0;
 
 	_agent = agent;
-	//_agent->_canTalk = false;
+	_agent->_canTalk = false;
 
 	if (_dialogueTarget != nullptr)
 	{
-		//_dialogueTarget->_canTalk = false;
+		_dialogueTarget->_canTalk = false;
 	}
 }
 
@@ -23,22 +23,21 @@ void UTalkStrategy::Update(float deltaTime)
 
 	if (_timer >= 5)
 	{
-		//_agent->_canTalk = true;
+		_agent->_canTalk = true;
 
 		if (_dialogueTarget != nullptr)
 		{
-			//_dialogueTarget->_canTalk = true;
+			_dialogueTarget->_canTalk = true;
 		}
 	}
 }
 
 void UTalkStrategy::Stop()
 {
-	//_agent->_talkingTo = nullptr;
+	_agent->_talkingTo = nullptr;
 }
 
 bool UTalkStrategy::Complete()
 {
-	return true;
-	//return _agent->_canTalk == true;
+	return _agent->_canTalk == true;
 }

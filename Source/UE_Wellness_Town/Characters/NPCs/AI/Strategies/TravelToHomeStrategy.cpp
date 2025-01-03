@@ -13,18 +13,12 @@ void UTravelToHomeStrategy::Start(UGOAP_Agent* agent)
 
 	if (IsAtHome() == false)
 	{
-		_target = _home->GetActorLocation();
-		_agent->SetDestination(_target);
+		_agent->SetDestination(_home->GetActorLocation());
 	}
 }
 
 void UTravelToHomeStrategy::Update(float deltaTime)
 {
-	if (_agent->GetCurrentDestination() != _target)
-	{
-		_agent->SetDestination(_target);
-	}
-
 	if (IsAtHome() == false)
 	{
 		return;
