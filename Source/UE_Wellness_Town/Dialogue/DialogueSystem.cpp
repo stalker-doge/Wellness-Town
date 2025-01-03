@@ -35,8 +35,6 @@ void UDialogueSystem::StartDialogue()
 {
 	//sets the index to 0
 	DialogueIndex = 0;
-	//calls the event
-	OnDialogueStart();
 	//loads the first line of dialogue
 	DialogueText = DialogueSpeakerLines[DialogueIndex];
 	//increments the index
@@ -44,14 +42,30 @@ void UDialogueSystem::StartDialogue()
 
 }
 
+void UDialogueSystem::StartDialogueQuestion(TArray<FString> Question)
+{
+	//sets the index to 0
+	DialogueIndex = 0;
+	//loads the first line of dialogue
+	DialogueText = Question[DialogueIndex];
+	//increments the index
+	DialogueIndex++;
+
+}
+
 void UDialogueSystem::NextLine()
 {
+	//makes sure the index is not out of bounds
+	if (DialogueIndex >= DialogueSpeakerLines.Num())
+	{
+		//if it is out of bounds end the dialogue
+		EndDialogue();
+		return;
+	}
 	//loads the next line of dialogue
 	DialogueText = DialogueSpeakerLines[DialogueIndex];
 	//increments the index
 	DialogueIndex++;
-	//calls the event
-	OnNextLine();
 
 }
 
@@ -61,25 +75,22 @@ void UDialogueSystem::NextLineQuestion(TArray<FString> Question)
 	DialogueText = Question[DialogueIndex];
 	//increments the index
 	DialogueIndex++;
-	//calls the event
-	OnNextLine();
 }
 
 void UDialogueSystem::PlayerDialogue(int32 Option)
 {
 	//sets the player dialogue text to the option selected
 	PlayerDialogueText = DialogueOptions[Option];
-	//calls the event
-	OnPlayerDialogue();
-	//calls the event
-	OnDialogueOptions();
-	//calls the event
-	OnNextLine();
 
 }
 
 void UDialogueSystem::EndDialogue()
 {
+	//sets the index to 0
+	DialogueIndex = 0;
+	//clears the dialogue text
+	DialogueText = "";
+
 }
 
 bool UDialogueSystem::CheckResponse(FString Response)
@@ -95,23 +106,50 @@ bool UDialogueSystem::CheckResponse(FString Response)
 	}
 }
 
-void UDialogueSystem::OnDialogueStart_Implementation()
+void UDialogueSystem::AddDialogueLine(FString Line)
 {
+	//adds a line of dialogue
+	DialogueSpeakerLines.Add(Line);
 }
 
-void UDialogueSystem::OnDialogueEnd_Implementation()
+void UDialogueSystem::AddDialogueQuestion1(FString Line)
 {
+	//adds a line of dialogue
+	DialogueQuestion1.Add(Line);
 }
 
-void UDialogueSystem::OnNextLine_Implementation()
+void UDialogueSystem::AddDialogueQuestion2(FString Line)
 {
+	//adds a line of dialogue
+	DialogueQuestion2.Add(Line);
 }
 
-void UDialogueSystem::OnPlayerDialogue_Implementation()
+void UDialogueSystem::AddDialogueQuestion3(FString Line)
 {
-
+	//adds a line of dialogue
+	DialogueQuestion3.Add(Line);
 }
 
-void UDialogueSystem::OnDialogueOptions_Implementation()
+void UDialogueSystem::AddPlayerLine(FString Line)
 {
+	//adds a line of dialogue
+	DialogueOptions.Add(Line);
+}
+
+void UDialogueSystem::ChangeNextLine(FString Line)
+{
+	//changes the next line of dialogue
+	DialogueText = Line;
+	//increments the index
+	DialogueIndex++;
+}
+
+void UDialogueSystem::StartDialogueFromLine(FString Line)
+{
+	//sets the index to 0
+	DialogueIndex = 0;
+	//loads the first line of dialogue
+	DialogueText = Line;
+	//increments the index
+	DialogueIndex++;
 }
