@@ -13,12 +13,18 @@ void UTravelToWorkStrategy::Start(UGOAP_Agent* agent)
 
 	if (IsAtWorkPlace() == false)
 	{
-		_agent->SetDestination(_workPlace->GetActorLocation());
+		_target = _workPlace->GetActorLocation();
+		_agent->SetDestination(_target);
 	}
 }
 
 void UTravelToWorkStrategy::Update(float deltaTime)
 {
+	if (_agent->GetCurrentDestination() != _target)
+	{
+		_agent->SetDestination(_target);
+	}
+
 	if (IsAtWorkPlace() == false)
 	{
 		return;

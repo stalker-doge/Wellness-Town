@@ -32,6 +32,11 @@ void UFishingWorkStrategy::Start(UGOAP_Agent* agent)
 
 void UFishingWorkStrategy::Update(float deltaTime)
 {
+	if (_npc->GetMesh()->IsVisible() == false)
+	{
+		return;
+	}
+
 	if (_fishingRod->IsFishing() == true)
 	{
 		return;
