@@ -8,19 +8,35 @@
 void USleepStrategy::Start(UGOAP_Agent* agent)
 {
 	_agent = agent;
-	_agent->_owner->SetActorRotation(_agent->_owner->GetActorRotation() + FRotator(0, 0, 90));
+	ToggleSleep(true);
 }
 
 void USleepStrategy::Update(float deltaTime)
 {
+	GEngine->AddOnScreenDebugMessage(20, 1, FColor::Blue, FString::Printf(TEXT("Sleeping")));
 }
 
 void USleepStrategy::Stop()
 {
-	_agent->_owner->SetActorRotation(_agent->_owner->GetActorRotation() + FRotator(0, 0, -90));
+	_agent->SetIsAtHome(false);
+	ToggleSleep(false);
 }
 
 bool USleepStrategy::Complete()
 {
 	return !_agent->_isSleepHours;
+}
+
+void USleepStrategy::ToggleSleep(bool isSleeping)
+{
+	_agent->GetMesh()->SetVisibility(!isSleeping);
+
+	if (isSleeping == true)
+	{
+		_agent->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	else
+	{
+		_agent->GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
 }

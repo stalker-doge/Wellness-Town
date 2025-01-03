@@ -4,22 +4,40 @@
 
 #include "CoreMinimal.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/AbstractStrategy.h"
-#include "WorkStrategy.generated.h"
+#include "BugCatcherWorkStrategy.generated.h"
+
 class UGOAP_Agent;
+class UGOAP_BugSensor;
+class ANPC_Base;
+class ABug;
+class ABugNet;
 
 UCLASS()
-class UE_WELLNESS_TOWN_API UWorkStrategy : public UAbstractStrategy
+class UE_WELLNESS_TOWN_API UBugCatcherWorkStrategy : public UAbstractStrategy
 {
 	GENERATED_BODY()
 	
 public:
+	void CreateSensor();
+	bool IsInTargetRange();
+
 	virtual void Start(UGOAP_Agent* agent) override;
 	virtual void Update(float deltaTime) override;
 	virtual void Stop() override;
 
 	virtual bool Complete() override;
-
 private:
+	UPROPERTY()
 	TObjectPtr<UGOAP_Agent> _agent;
-	TObjectPtr<AActor> _workPlace;
+	UPROPERTY()
+	TObjectPtr<ANPC_Base> _npc;
+	UPROPERTY()
+	TObjectPtr<ABug> _target;
+	UPROPERTY()
+	TObjectPtr<UGOAP_BugSensor> _sensor;
+
+	UPROPERTY()
+	TObjectPtr<ABugNet> _bugNet;
+
+	float _timer;
 };

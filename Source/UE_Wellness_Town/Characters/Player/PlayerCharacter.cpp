@@ -89,7 +89,7 @@ void APlayerCharacter::CastHeldItem()
 
 	if (_heldObject->DisplaySpline() == false)
 	{
-		bool success = _heldObject->ItemCast(this, nullptr);
+		bool success = _heldObject->ItemCast(this, nullptr, true);
 		return;
 	}
 
@@ -99,11 +99,10 @@ void APlayerCharacter::CastHeldItem()
 		FVector unitDirection = GetActorForwardVector() + GetActorUpVector();
 		unitDirection.Normalize();
 
-
 		CreateSpline(GetMesh()->GetSocketLocation("HoldSocket"), unitDirection, _throwStrength, 2, true);
 	}
 
-	bool success = _heldObject->ItemCast(this, _splineComponent);
+	bool success = _heldObject->ItemCast(this, _splineComponent, true);
 
 	_splineComponent->ClearSplinePoints();
 
@@ -192,6 +191,11 @@ void APlayerCharacter::AltInteract()
 	//Disables player rotation if alt interacting, makes the pulling mechanic cleaner
 	_movementComponent->bOrientRotationToMovement = false;
 	_movementComponent->IsPushingActor()->AddForce(this);
+}
+
+USpringArmComponent* APlayerCharacter::GetSpringArm()
+{
+	return _springArmComponent;
 }
 
 AActor* APlayerCharacter::GetInteractTarget()

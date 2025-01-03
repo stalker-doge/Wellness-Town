@@ -41,7 +41,7 @@ void AItem::Interact(APlayerCharacter* player)
 	player->PickUp(this);
 }
 
-bool AItem::ItemCast(AActor* player, USplineComponent* path)
+bool AItem::ItemCast(AActor* player, USplineComponent* path, bool isPlayer)
 {
 	if (path == nullptr)
 	{

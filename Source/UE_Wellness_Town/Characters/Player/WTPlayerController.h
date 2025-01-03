@@ -18,7 +18,7 @@ class UE_WELLNESS_TOWN_API AWTPlayerController : public APlayerController
 	GENERATED_BODY()
 
 protected:
-	//void HandleLook(const struct FInputActionValue& value);
+	void HandleLook(const struct FInputActionValue& value);
 	void HandleMove(const struct FInputActionValue& value);
 	void HandleJump();
 	void HandleInteract();
@@ -38,6 +38,9 @@ private:
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Mapping Context")
 	TObjectPtr<UInputMappingContext> inputMappingContext;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Character Movement")
+	TObjectPtr<UInputAction> actionLook;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Character Movement")
 	TObjectPtr<UInputAction> actionMove;

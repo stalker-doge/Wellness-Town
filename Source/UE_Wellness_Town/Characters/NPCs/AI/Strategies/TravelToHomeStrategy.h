@@ -4,15 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/AbstractStrategy.h"
-#include "WorkStrategy.generated.h"
+#include "TravelToHomeStrategy.generated.h"
+
 class UGOAP_Agent;
 
 UCLASS()
-class UE_WELLNESS_TOWN_API UWorkStrategy : public UAbstractStrategy
+class UE_WELLNESS_TOWN_API UTravelToHomeStrategy : public UAbstractStrategy
 {
 	GENERATED_BODY()
 	
 public:
+
 	virtual void Start(UGOAP_Agent* agent) override;
 	virtual void Update(float deltaTime) override;
 	virtual void Stop() override;
@@ -20,6 +22,9 @@ public:
 	virtual bool Complete() override;
 
 private:
+	bool IsAtHome();
+
+private:
 	TObjectPtr<UGOAP_Agent> _agent;
-	TObjectPtr<AActor> _workPlace;
+	TObjectPtr<AActor> _home;
 };
