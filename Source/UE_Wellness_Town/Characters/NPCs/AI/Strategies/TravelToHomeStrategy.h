@@ -27,4 +27,6 @@ private:
 private:
 	TObjectPtr<UGOAP_Agent> _agent;
 	TObjectPtr<AActor> _home;
+
+	FVector _target;
 };
