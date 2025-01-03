@@ -89,7 +89,7 @@ bool AFishingRod::ItemCast(AActor* player, USplineComponent* path, bool isPlayer
 				}
 				else
 				{
-					Cast<ANPC_Base>(_owner)->PauseAI();
+					Cast<ANPC_Base>(_owner)->SetPauseAI(true);
 				}
 
 				InitFishing();
@@ -141,7 +141,7 @@ void AFishingRod::Tick(float DeltaTime)
 		}
 		else
 		{
-			Cast<ANPC_Base>(_owner)->ResumeAI();
+			Cast<ANPC_Base>(_owner)->SetPauseAI(false);
 		}
 
 		_owner = nullptr;

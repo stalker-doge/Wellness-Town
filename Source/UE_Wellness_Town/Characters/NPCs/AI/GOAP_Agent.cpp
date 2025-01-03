@@ -43,6 +43,11 @@ void UGOAP_Agent::Init()
 	//_npcSensor->_sensor->SetupAttachment(_owner->GetRootComponent());
 }
 
+ANPC_Base* UGOAP_Agent::GetNPC()
+{
+	return _owner;
+}
+
 void UGOAP_Agent::SetupBeliefs()
 {
 	UGOAP_BeliefFactory* factory = NewObject<UGOAP_BeliefFactory>();
@@ -140,14 +145,7 @@ void UGOAP_Agent::SetPauseAgent(bool val)
 
 	_isPaused = val;
 
-	if (_isPaused == true)
-	{
-		_owner->PauseMovement();
-	}
-	else
-	{
-		_owner->ResumeMovement();
-	}
+	_owner->SetPauseMovement(_isPaused);
 }
 void UGOAP_Agent::TogglePauseAgent()
 {
@@ -181,9 +179,9 @@ void UGOAP_Agent::SetDestination(FVector destination)
 	_owner->SetDestination(destination);
 }
 
-void UGOAP_Agent::SetActorLookAt(AActor* target)
+FVector UGOAP_Agent::GetCurrentDestination()
 {
-	_owner->LookAtTarget(target);
+	return _owner->GetCurrentDestination();
 }
 
 FVector UGOAP_Agent::GetActorLocation()
@@ -241,7 +239,7 @@ void UGOAP_Agent::BeginPlay()
 	SetupGoals();
 
 	_planner = NewObject<UGOAP_Planner>();
-	_canTalk = true;
+	//_canTalk = true;
 }
 
 
@@ -297,19 +295,14 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	{
 		_planFailCounter += 1;
 
-		GEngine->AddOnScreenDebugMessage(10, 5, FColor::Red, FString::Printf(TEXT("Counter: %i"), _planFailCounter));
-
 		if (_planFailCounter > 5)
 		{
 			Reset();
 		}
-
-		GEngine->AddOnScreenDebugMessage(11, 5, FColor::Red, FString::Printf(TEXT("Current Action: NONE")));
 	}
 	else
 	{
 		_planFailCounter = 0;
-		GEngine->AddOnScreenDebugMessage(11, 5, FColor::Red, FString::Printf(TEXT("Current Action: %s"), *_currentAction->_name));
 	}
 }
 

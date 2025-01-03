@@ -25,19 +25,27 @@ public:
 	// Sets default values for this character's properties
 	ANPC_Base();
 
-	void UseItem(USplineComponent* path);
-
-	void LookAtTarget(AActor* target);
+	UFUNCTION(BlueprintCallable)
 	void SetDestination(FVector destination);
-	void PauseMovement();
-	void ResumeMovement();
+	UFUNCTION(BlueprintCallable)
+	FVector GetCurrentDestination();
+
+	// Pauses movement in the controller. Used only for AI related actions (such as fishing). Pause AI instead if you want to prevent moving in general. false resumes movement.
+	UFUNCTION(BlueprintCallable)
+	void SetPauseMovement(bool val);
+	// Checks if the NPC has a path
+	UFUNCTION(BlueprintCallable)
 	bool HasPath();
 
-	void PauseAI();
-	void ResumeAI();
+	// Sets it the AI is paused
+	UFUNCTION(BlueprintCallable)
+	void SetPauseAI(bool val);
 
+	void UseItem(USplineComponent* path);
 	void PickUp(AItem* item);
 	void DropItem();
+
+	bool IsInPlayerRange();
 
 	USplineComponent* GetSplineComponent();
 
@@ -49,12 +57,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
-
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNPC_Data> _data;
 
@@ -77,4 +85,13 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<USplineComponent> _splineComponent;
+
+	UPROPERTY()
+	TObjectPtr<APlayerCharacter> _player;
+	UPROPERTY(EditAnywhere)
+	float _hideDistanceFromPlayer;
+
+	float _timer;
+
+	FVector _currentDestination;
 };
