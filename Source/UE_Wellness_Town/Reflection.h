@@ -33,6 +33,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Reflection")//index of the current question
 		int32 ReflectionIndex;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Reflection")//current question
+		FString CurrentQuestion;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Reflection")//current response
+		FString CurrentResponse;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

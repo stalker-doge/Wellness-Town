@@ -57,6 +57,11 @@ void AReflection::AddQuestion(FString NewQuestion)
 
 void AReflection::EndReflection()
 {
+	//resets the index to 0
+	ReflectionIndex = 0;
+	//clears the array of questions
+	ReflectionQuestions.Empty();
+
 }
 
 void AReflection::SetCurrentQuestion(FString NewQuestion)
