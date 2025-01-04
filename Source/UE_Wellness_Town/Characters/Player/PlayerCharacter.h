@@ -12,7 +12,9 @@ class USphereComponent;
 class UPlayerMovementComponent;
 class USplineComponent;
 class USplineMeshComponent;
+class UMinimapComponent;
 class AItem;
+class UPlayerHUD;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API APlayerCharacter : public ACharacter
@@ -79,6 +81,13 @@ private:
 	TObjectPtr<UCameraComponent> _camera;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USpringArmComponent> _springArmComponent;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPlayerHUD> _hudDefault;
+	TObjectPtr<UPlayerHUD> _playerHUD;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UMinimapComponent> _minimap;
 
 	UPROPERTY()
 	TObjectPtr<UPlayerMovementComponent> _movementComponent;

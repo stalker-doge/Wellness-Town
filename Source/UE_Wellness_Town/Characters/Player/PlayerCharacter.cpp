@@ -12,6 +12,9 @@
 #include "UE_Wellness_Town/Characters/Player/PlayerMovementComponent.h"
 #include "UE_Wellness_Town/Objects/MoveableActor.h"
 #include "UE_Wellness_Town/Objects/Item.h"
+#include "UE_Wellness_Town/Characters/Player/MinimapComponent.h"
+#include "UE_Wellness_Town/UI/PlayerHUD.h"
+#include "UE_Wellness_Town/Characters/Player/WTPlayerController.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -41,6 +44,10 @@ APlayerCharacter::APlayerCharacter()
 
 	_splineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline Component"));
 	checkf(_splineComponent, TEXT("Spline Component is an invalid value"));
+
+	_minimap = CreateDefaultSubobject<UMinimapComponent>(TEXT("Minimap Component"));
+	checkf(_minimap, TEXT("Missing Minimap Component"));
+	_minimap->Init();
 
 	_heldObject = nullptr;
 }
@@ -254,6 +261,11 @@ void APlayerCharacter::BeginPlay()
 
 	_interactCollider->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::BeginInteractOverlap);
 	_interactCollider->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::EndInteractOverlap);
+
+	checkf(_hudDefault, TEXT("Missing Player HUD"));
+	_playerHUD = CreateWidget<UPlayerHUD>(GetController<AWTPlayerController>(), _hudDefault);
+	checkf(_playerHUD, TEXT("Failed to Create Player HUD"));
+	_playerHUD->AddToPlayerScreen();
 }
 
 void APlayerCharacter::DrawTrajectory()
