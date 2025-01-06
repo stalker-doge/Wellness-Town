@@ -7,12 +7,15 @@
 #include "UE_Wellness_Town/Characters/NPCs/AI/GOAP_Agent.h"
 #include "UE_Wellness_Town/Characters/Player/PlayerCharacter.h"
 #include "UE_Wellness_Town/Objects/Item.h"
+#include "UE_Wellness_Town/Characters/NPCs/Mood.h"
 #include "AIController.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/SplineComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 ANPC_Base::ANPC_Base()
@@ -30,6 +33,9 @@ ANPC_Base::ANPC_Base()
 	checkf(_agent, TEXT("NPC is missing GOAP_Agent component"));
 
 	_agent->Init();
+
+	_niagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara Component"));
+	_niagara->SetupAttachment(GetMesh(), FName("NiagaraSocket"));
 }
 
 void ANPC_Base::UseItem(USplineComponent* path)
@@ -79,6 +85,20 @@ void ANPC_Base::SetPauseAI(bool val)
 	_agent->SetPauseAgent(val);
 }
 
+void ANPC_Base::SetMood(Mood mood)
+{
+	_mood = mood;
+
+	if (_niagaraSystems.Contains(mood) == false)
+	{
+		_niagara->Deactivate();
+		return;
+	}
+
+	_niagara->SetAsset(_niagaraSystems[_mood]);
+	_niagara->Activate();
+}
+
 
 void ANPC_Base::PickUp(AItem* item)
 {
@@ -94,7 +114,7 @@ void ANPC_Base::PickUp(AItem* item)
 
 	if (IsInPlayerRange() == false)
 	{
-		_heldObject->GetStaticMesh()->ToggleVisibility(false);
+		ToggleVisibility(false);
 	}
 }
 
@@ -146,6 +166,20 @@ void ANPC_Base::BeginPlay()
 	
 	_controller = Cast<AAIController>(GetController());
 	_player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	_mood = _startingMood;
+	SetMood(_mood);
+}
+
+void ANPC_Base::ToggleVisibility(bool isVisible)
+{
+	if (_heldObject != nullptr)
+	{
+		_heldObject->GetStaticMesh()->ToggleVisibility(isVisible);
+	}
+
+	GetMesh()->ToggleVisibility(isVisible);
+	_niagara->SetActive(isVisible);
 }
 
 bool ANPC_Base::IsInPlayerRange()
@@ -161,12 +195,7 @@ bool ANPC_Base::IsInPlayerRange()
 	{
 		if (GetMesh()->IsVisible() == true)
 		{
-			if (_heldObject != nullptr)
-			{
-				_heldObject->GetStaticMesh()->ToggleVisibility(false);
-			}
-
-			GetMesh()->ToggleVisibility(false);
+			ToggleVisibility(false);
 		}
 
 		return false;
@@ -174,12 +203,7 @@ bool ANPC_Base::IsInPlayerRange()
 
 	if (GetMesh()->IsVisible() == false && _agent->IsAtHome() == false)
 	{
-		if (_heldObject != nullptr)
-		{
-			_heldObject->GetStaticMesh()->ToggleVisibility(true);
-		}
-
-		GetMesh()->ToggleVisibility(true);
+		ToggleVisibility(true);
 	}
 
 	return true;

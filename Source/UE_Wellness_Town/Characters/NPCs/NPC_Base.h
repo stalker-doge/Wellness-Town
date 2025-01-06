@@ -15,6 +15,8 @@ class UGOAP_Agent;
 class UStaticMeshComponent;
 class AItem;
 class USplineComponent;
+class UNiagaraComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class UE_WELLNESS_TOWN_API ANPC_Base : public ACharacter, public IInteractable
@@ -41,6 +43,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetPauseAI(bool val);
 
+	UFUNCTION(BlueprintCallable)
+	void SetMood(Mood mood);
+
 	void UseItem(USplineComponent* path);
 	void PickUp(AItem* item);
 	void DropItem();
@@ -51,6 +56,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	UNPC_Data* GetNPCData();
+
+	void ToggleVisibility(bool val);
 
 	virtual void Interact(APlayerCharacter* player) override;
 	// Called every frame
@@ -85,6 +92,14 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<USplineComponent> _splineComponent;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraComponent> _niagara;
+	UPROPERTY(EditAnywhere)
+	TMap<Mood, TObjectPtr<UNiagaraSystem>> _niagaraSystems;
+
+	UPROPERTY(EditAnywhere)
+	Mood _startingMood;
+	Mood _mood;
 
 	UPROPERTY()
 	TObjectPtr<APlayerCharacter> _player;

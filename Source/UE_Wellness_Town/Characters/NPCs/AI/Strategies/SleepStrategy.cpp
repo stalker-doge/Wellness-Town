@@ -31,7 +31,7 @@ void USleepStrategy::ToggleSleep(bool isSleeping)
 {
 	if (_agent->_owner->IsInPlayerRange() == true)
 	{
-		_agent->GetMesh()->SetVisibility(!isSleeping);
+		_agent->_owner->ToggleVisibility(!isSleeping);
 	}
 
 	if (isSleeping == true)
