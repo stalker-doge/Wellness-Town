@@ -29,6 +29,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AJournal> _journal;
 
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNPC_Manager> _npcManager;
-	TObjectPtr<UTimeManager> _timeManager;
 };
