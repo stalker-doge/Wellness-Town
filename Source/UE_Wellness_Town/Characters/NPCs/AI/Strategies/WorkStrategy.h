@@ -5,10 +5,8 @@
 #include "CoreMinimal.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/AbstractStrategy.h"
 #include "WorkStrategy.generated.h"
+class UGOAP_Agent;
 
-/**
- * 
- */
 UCLASS()
 class UE_WELLNESS_TOWN_API UWorkStrategy : public UAbstractStrategy
 {
@@ -23,4 +21,5 @@ public:
 
 private:
 	TObjectPtr<UGOAP_Agent> _agent;
+	TObjectPtr<AActor> _workPlace;
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/WorkType.h"
 #include "GOAP_Agent.generated.h"
 
 class ANPC_Base;
@@ -14,6 +15,8 @@ class UGOAP_Action;
 class UGOAP_Plan;
 class UGOAP_NPCSensor;
 class UTimeManager;
+class AFishingRod;
+class ABugNet;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UE_WELLNESS_TOWN_API UGOAP_Agent : public UActorComponent
@@ -25,33 +28,69 @@ public:
 	UGOAP_Agent();
 
 	void Init();
-	void SetupBeliefs();
-	void SetupGoals();
-	void SetupActions();
+	ANPC_Base* GetNPC();
 
-	void CalculateActionPlan();
+	AActor* GetHome();
+	void SetIsAtHome(bool val);
+	bool IsAtHome();
+
+	AActor* GetWorkPlace();
+	WorkType GetWorkType();
+	void SetIsAtWorkPlace(bool val);
+	bool IsAtWorkPlace();
+
+	TSubclassOf<AFishingRod> GetFishingRodDefault();
+	TSubclassOf<ABugNet> GetBugNetDefault();
+
+	void SetPauseAgent(bool val);
+	void TogglePauseAgent();
 
 	void SetDestination(FVector destination);
+
+	FVector GetCurrentDestination();
 	FVector GetActorLocation();
 	FVector GetForwardVector();
 
+	USkeletalMeshComponent* GetMesh();
+
 	bool HasPath();
+
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+private:
+	void SetupBeliefs();
+	void SetupGoals();
+	void SetupActions();
+
+	void Reset();
+	void CalculateActionPlan();
+
 public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AActor> _home;
+
+	UPROPERTY(EditAnywhere)
+	WorkType _workType;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AActor> _workPlace;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AFishingRod> _fishingRodDefault;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABugNet> _bugNetDefault;
 
 	TObjectPtr<ANPC_Base> _owner;
-	TObjectPtr<UGOAP_NPCSensor> _npcSensor;
+	//TObjectPtr<UGOAP_NPCSensor> _npcSensor;
 
 	UPROPERTY()
 	TMap<FString, TObjectPtr<UGOAP_Belief>> _beliefs;
 
-	TObjectPtr<UGOAP_Agent> _talkingTo;
-	bool _canTalk;
+	//TObjectPtr<UGOAP_Agent> _talkingTo;
+	//bool _canTalk;
 
 	UPROPERTY()
 	TObjectPtr<UGOAP_Goal> _currentGoal;
@@ -71,6 +110,15 @@ public:
 	TObjectPtr<UGOAP_Planner> _planner;
 
 	TObjectPtr<UTimeManager> _timeManager;
+
 	bool _isWorkHours;
 	bool _isSleepHours;
+
+	bool _isAtHome;
+
+	bool _isWorking;
+	bool _isAtWorkPlace;
+
+	int _planFailCounter;
+	bool _isPaused;
 };

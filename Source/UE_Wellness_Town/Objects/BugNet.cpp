@@ -18,7 +18,7 @@ ABugNet::ABugNet()
 	_displaySpline = false;
 }
 
-bool ABugNet::ItemCast(AActor* player, USplineComponent* path)
+bool ABugNet::ItemCast(AActor* player, USplineComponent* path, bool isPlayer)
 {
 	TArray<AActor*> overlappingActors;
 	_collisionSphere->GetOverlappingActors(overlappingActors, ABug::StaticClass());
@@ -30,12 +30,6 @@ bool ABugNet::ItemCast(AActor* player, USplineComponent* path)
 	}
 
 	return true;
-}
-
-void ABugNet::DisableCollision()
-{
-	_staticMesh->SetSimulatePhysics(false);
-	_staticMesh->SetCollisionProfileName(FName("NoCollision"));
 }
 
 void ABugNet::BeginPlay()
