@@ -3,7 +3,6 @@
 
 #include "GOAP_Agent.h"
 #include "UE_Wellness_Town/GameModes/WT_GameMode.h"
-#include "UE_Wellness_Town/Utility/TimeManager.h"
 #include "UE_Wellness_Town/Characters/NPCs/NPC_Base.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/GOAP_Belief.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/GOAP_Goal.h"
@@ -229,8 +228,8 @@ void UGOAP_Agent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	_timeManager = Cast<AWT_GameMode>(GetWorld()->GetAuthGameMode())->GetTimeManager();
-	checkf(_timeManager, TEXT("No Time Manager"));
+	//_timeManager = Cast<AWT_GameMode>(GetWorld()->GetAuthGameMode())->GetTimeManager();
+	//checkf(_timeManager, TEXT("No Time Manager"));
 
 	//_npcSensor->Init(150, this);
 
@@ -248,13 +247,20 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	_timer += DeltaTime;
+
+	if (_timer >= 24)
+	{
+		_timer = 0;
+	}
+
 	if (_isPaused == true)
 	{
 		return;
 	}
 
-	_isWorkHours = (_timeManager->GetHours() >= 9 && _timeManager->GetHours() < 17);
-	_isSleepHours = (_timeManager->GetHours() >= 22 || _timeManager->GetHours() < 6);
+	_isWorkHours = (_timer >= 9 && _timer < 17);
+	_isSleepHours = (_timer >= 22 || _timer < 6);
 
 	if (_currentAction == nullptr)
 	{

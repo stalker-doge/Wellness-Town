@@ -143,7 +143,7 @@ UNPC_Data* ANPC_Base::GetNPCData()
 // Current dialogue was just to check for errors with NPC_Data access. Remove/change if needed for the full Dialogue implementation
 void ANPC_Base::Interact(APlayerCharacter* player)
 {
-	_agent->TogglePauseAgent();
+	//_agent->TogglePauseAgent();
 
 	/*if (_dialogueDefault == nullptr)
 	{

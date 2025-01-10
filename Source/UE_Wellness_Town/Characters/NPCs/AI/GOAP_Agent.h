@@ -14,7 +14,6 @@ class UGOAP_Planner;
 class UGOAP_Action;
 class UGOAP_Plan;
 class UGOAP_NPCSensor;
-class UTimeManager;
 class AFishingRod;
 class ABugNet;
 
@@ -109,8 +108,6 @@ public:
 	UPROPERTY()
 	TObjectPtr<UGOAP_Planner> _planner;
 
-	TObjectPtr<UTimeManager> _timeManager;
-
 	bool _isWorkHours;
 	bool _isSleepHours;
 
@@ -121,4 +118,6 @@ public:
 
 	int _planFailCounter;
 	bool _isPaused;
+
+	float _timer;
 };
