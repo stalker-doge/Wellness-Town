@@ -19,7 +19,6 @@ public:
 	AWT_GameMode();
 
 	UNPC_Manager* GetNPCManager();
-	UTimeManager* GetTimeManager();
 
 	virtual void Tick(float DeltaTime) override;
 protected:

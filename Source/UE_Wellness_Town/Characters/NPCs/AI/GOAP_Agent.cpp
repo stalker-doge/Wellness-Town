@@ -247,7 +247,7 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	_timer += DeltaTime;
+	_timer += DeltaTime * 0.25f;
 
 	if (_timer >= 24)
 	{

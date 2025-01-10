@@ -37,6 +37,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> _staticMesh;
 
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNPC_Manager> _npcManager;
 
  	UPROPERTY(EditAnywhere)
