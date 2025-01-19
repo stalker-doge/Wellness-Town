@@ -76,10 +76,6 @@ void ABugSpawner::Tick(float DeltaTime)
 
 	_playerInRange = CheckIfPlayerInRange();
 
-	GEngine->AddOnScreenDebugMessage(13, 5, FColor::Yellow, FString::Printf(TEXT("PlayerInRange: %s"), _playerInRange? TEXT("TRUE") : TEXT("FALSE")));
-	GEngine->AddOnScreenDebugMessage(14, 5, FColor::Yellow, FString::Printf(TEXT("Timer: %f"), _timer));
-	GEngine->AddOnScreenDebugMessage(15, 5, FColor::Yellow, FString::Printf(TEXT("Despawn Timer: %f"), _despawnTimer));
-
 	if (_playerInRange == true)
 	{
 		_timer += DeltaTime;
@@ -94,7 +90,6 @@ void ABugSpawner::Tick(float DeltaTime)
 			_despawnTimer += DeltaTime;
 		}
 	}
-
 
 	if (_timer > _spawnDelay)
 	{

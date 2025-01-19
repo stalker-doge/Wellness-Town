@@ -10,6 +10,37 @@
 #include "PlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 
+void AWTPlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+
+	_playerCharacter = Cast<APlayerCharacter>(aPawn);
+	checkf(_playerCharacter, TEXT("PLAYER_CHARACTER is an invalid value"));
+
+	_movementComponent = _playerCharacter->GetCharacterMovement();
+	checkf(_movementComponent, TEXT("MOVEMENT_COMPONENT is an invalid value"));
+
+	_enhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
+	checkf(_enhancedInputComponent, TEXT("ENHANCED_INPUT_COMPONENT is an invalid value"));
+
+	UEnhancedInputLocalPlayerSubsystem* inputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	checkf(inputSubsystem, TEXT("INPUT_SUBSYSTEM is an invalid value"));
+
+	checkf(inputMappingContext, TEXT("INPUT_MAPPING_CONTEXT is an invalid value"));
+	inputSubsystem->ClearAllMappings();
+	inputSubsystem->AddMappingContext(inputMappingContext, 0);
+
+	BindActions(_enhancedInputComponent);
+}
+
+void AWTPlayerController::OnUnPossess()
+{
+	_enhancedInputComponent->ClearActionBindings();
+
+	Super::OnUnPossess();
+}
+
+#pragma region "Inputs"
 void AWTPlayerController::HandleLook(const FInputActionValue& value)
 {
 	const float movementVector = value.Get<float>();
@@ -65,36 +96,7 @@ void AWTPlayerController::HandleThrowHold()
 {
 	_playerCharacter->IsReadyToThrow();
 }
-
-void AWTPlayerController::OnPossess(APawn* aPawn)
-{
-	Super::OnPossess(aPawn);
-
-	_playerCharacter = Cast<APlayerCharacter>(aPawn);
-	checkf(_playerCharacter, TEXT("PLAYER_CHARACTER is an invalid value"));
-
-	_movementComponent = _playerCharacter->GetCharacterMovement();
-	checkf(_movementComponent, TEXT("MOVEMENT_COMPONENT is an invalid value"));
-
-	_enhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	checkf(_enhancedInputComponent, TEXT("ENHANCED_INPUT_COMPONENT is an invalid value"));
-
-	UEnhancedInputLocalPlayerSubsystem* inputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	checkf(inputSubsystem, TEXT("INPUT_SUBSYSTEM is an invalid value"));
-
-	checkf(inputMappingContext, TEXT("INPUT_MAPPING_CONTEXT is an invalid value"));
-	inputSubsystem->ClearAllMappings();
-	inputSubsystem->AddMappingContext(inputMappingContext, 0);
-
-	BindActions(_enhancedInputComponent);
-}
-
-void AWTPlayerController::OnUnPossess()
-{
-	_enhancedInputComponent->ClearActionBindings();
-
-	Super::OnUnPossess();
-}
+#pragma endregion
 
 void AWTPlayerController::BindActions(UEnhancedInputComponent* inputComponent)
 {

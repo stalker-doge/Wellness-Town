@@ -7,13 +7,6 @@
 #include "UE_Wellness_Town/Animation/MantleAnimNotify.h"
 #include "UE_Wellness_Town/Objects/MoveableActor.h"
 
-void UPlayerMovementComponent::InitAnimations()
-{
-	if (const auto mantleNotify = FindNotifyByClass<UMantleAnimNotify>(_mantleAnimation))
-	{
-		mantleNotify->OnNotified.AddUObject(this, &UPlayerMovementComponent::OnMantleAnimFinished);
-	}
-}
 
 void UPlayerMovementComponent::InitializeComponent()
 {
@@ -24,6 +17,27 @@ void UPlayerMovementComponent::InitializeComponent()
 
 	_lastMode = EMovementMode::MOVE_Walking;
 	InitAnimations();
+}
+
+#pragma region "Movement"
+void UPlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
+{
+	TryPushing();
+	TryMantle();
+
+	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
+}
+
+void UPlayerMovementComponent::UpdateCharacterStateAfterMovement(float DeltaSeconds)
+{
+	Super::UpdateCharacterStateAfterMovement(DeltaSeconds);
+
+	const TSharedPtr<FRootMotionSource> rootMotion = GetRootMotionSourceByID(_rootMotionSourceID);
+
+	if (rootMotion && rootMotion->Status.HasFlag(ERootMotionSourceStatusFlags::Finished))
+	{
+		RemoveRootMotionSourceByID(_rootMotionSourceID);
+	}
 }
 
 void UPlayerMovementComponent::PhysCustom(float deltaTime, int32 Iterations)
@@ -38,46 +52,6 @@ void UPlayerMovementComponent::PhysCustom(float deltaTime, int32 Iterations)
 	}
 }
 
-void UPlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
-{
-	TryPushing();
-	TryMantle();
-
-	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
-}
-
-void UPlayerMovementComponent::UpdateCharacterStateAfterMovement(float DeltaSeconds)
-{
-	Super::UpdateCharacterStateAfterMovement(DeltaSeconds);
-
-	const TSharedPtr<FRootMotionSource> rootMotion = GetRootMotionSourceByID(RootMotionSourceID);
-
-	if (rootMotion && rootMotion->Status.HasFlag(ERootMotionSourceStatusFlags::Finished))
-	{
-		RemoveRootMotionSourceByID(RootMotionSourceID);
-	}
-}
-
-float UPlayerMovementComponent::GetSpeed() const
-{
-	return Velocity.Length();
-}
-
-bool UPlayerMovementComponent::IsWalk() const
-{
-	if (!IsWalking() || FMath::IsNearlyZero(GetSpeed()))
-	{
-		return false;
-	}
-
-	if (IsPushing())
-	{
-		return false;
-	}
-
-	return true;
-}
-
 void UPlayerMovementComponent::EnableMovement()
 {
 	MovementMode = _lastMode;
@@ -88,87 +62,8 @@ void UPlayerMovementComponent::DisableMovement()
 	_lastMode = MovementMode;
 	MovementMode = EMovementMode::MOVE_None;
 }
-
-#pragma region "Pushing"
-bool UPlayerMovementComponent::CanPush()
-{
-	// Check if the character is on walkable floor
-	FFindFloorResult floorResult;
-	FindFloor(UpdatedComponent->GetComponentLocation(), floorResult, false);
-
-	if (!floorResult.bWalkableFloor)
-	{
-		_pushingActor = nullptr;
-		return false;
-	}
-
-	// Check if a movable actor is in front of the player
-	FHitResult hitResult;
-	FCollisionQueryParams params;
-	params.AddIgnoredActor(GetOwner());
-
-	const FVector start = UpdatedComponent->GetComponentLocation();
-	const FVector end = start + UpdatedComponent->GetForwardVector() * ForwardSearchPushingLength;
-
-	if (!GetWorld()->LineTraceSingleByProfile(hitResult, start, end, "BlockAll", params))
-	{
-		_pushingActor = nullptr;
-		return false;
-	}
-
-	const TObjectPtr<AActor> Actor = hitResult.GetActor();
-
-	if (!Actor)
-	{
-		_pushingActor = nullptr;
-		return false;
-	}
-
-	if (Actor->ActorHasTag(MovableTag) == false)
-	{
-		_pushingActor = nullptr;
-		return false;
-	}
-
-	_pushingActor = Cast<AMoveableActor>(Actor);
-	return true;
-}
-
-void UPlayerMovementComponent::TryPushing()
-{
-	_isPushing = CanPush();
-	if (_isPushing == false)
-	{
-		return;
-	}
-
-	// Change capsule size to pushing dimensions
-	const float oldUnscaleHalfHeight = CharacterOwner->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(PushingCapsuleRadius, oldUnscaleHalfHeight);
-	SetMovementMode(MOVE_Custom, CMOVE_Pushing);
-}
-
-void UPlayerMovementComponent::PhysPushing(const float DeltaTime, const int32 Iterations)
-{
-	if (_isPushing == false)
-	{
-		// Restore default capsule size
-		const TObjectPtr<ACharacter> defaultCharacter = CharacterOwner->GetClass()->GetDefaultObject<ACharacter>();
-		const float defaultUnscaleRadius = defaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleRadius();
-		const float defaultUnscaleHalfHeight = defaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-		CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(defaultUnscaleRadius, defaultUnscaleHalfHeight);
-		SetMovementMode(DefaultLandMovementMode);
-	}
-
-	PhysWalking(DeltaTime, Iterations);
-}
-
-AMoveableActor* UPlayerMovementComponent::IsPushingActor()
-{
-	return _pushingActor;
-}
-
 #pragma endregion
+
 #pragma region "Mantling"
 
 void UPlayerMovementComponent::TryMantle()
@@ -210,7 +105,7 @@ void UPlayerMovementComponent::TryMantle()
 	{
 		return;
 	}
-	
+
 	DrawDebugPoint(GetWorld(), frontResult.Location, 30, FColor::Emerald, false, 2);
 
 	//Checks if the object has a reachable point on top of it
@@ -245,7 +140,7 @@ void UPlayerMovementComponent::TryMantle()
 	float height = surfaceHits.Location - componentLocation | FVector::UpVector;
 	DrawDebugPoint(GetWorld(), surfaceHits.Location, 20, FColor::Blue, false, 2);
 
-	if(height > _mantleReachHeight)
+	if (height > _mantleReachHeight)
 	{
 		return;
 	}
@@ -264,18 +159,18 @@ void UPlayerMovementComponent::TryMantle()
 	DrawDebugCapsule(GetWorld(), transitionTarget, GetCapsuleHalfHeight(), GetCapsuleRadius(), FQuat::Identity, FColor::Green, false, 3);
 
 	//Starts the animation and applies a fixed motion to the player
-	RootMotionSource.Reset();
-	RootMotionSource = MakeShared<FRootMotionSource_MoveToForce>();
-	RootMotionSource->AccumulateMode = ERootMotionAccumulateMode::Override;
-	RootMotionSource->Duration = _mantleAnimation->GetPlayLength() - 0.1f;
-	RootMotionSource->StartLocation = UpdatedComponent->GetComponentLocation();
-	RootMotionSource->TargetLocation = transitionTarget;
+	_rootMotionSource.Reset();
+	_rootMotionSource = MakeShared<FRootMotionSource_MoveToForce>();
+	_rootMotionSource->AccumulateMode = ERootMotionAccumulateMode::Override;
+	_rootMotionSource->Duration = _mantleAnimation->GetPlayLength() - 0.1f;
+	_rootMotionSource->StartLocation = UpdatedComponent->GetComponentLocation();
+	_rootMotionSource->TargetLocation = transitionTarget;
 
 	Acceleration = FVector::ZeroVector;
 	Velocity = FVector::ZeroVector;;
 
 	SetMovementMode(MOVE_Flying);
-	RootMotionSourceID = ApplyRootMotionSource(RootMotionSource);
+	_rootMotionSourceID = ApplyRootMotionSource(_rootMotionSource);
 
 
 	_player->PlayAnimMontage(_mantleAnimation);
@@ -288,6 +183,111 @@ void UPlayerMovementComponent::OnMantleAnimFinished()
 
 #pragma endregion
 
+#pragma region "Pushing"
+void UPlayerMovementComponent::TryPushing()
+{
+	_isPushing = CanPush();
+	if (_isPushing == false)
+	{
+		return;
+	}
+
+	// Change capsule size to pushing dimensions
+	const float oldUnscaleHalfHeight = CharacterOwner->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(PushingCapsuleRadius, oldUnscaleHalfHeight);
+	SetMovementMode(MOVE_Custom, CMOVE_Pushing);
+}
+
+bool UPlayerMovementComponent::CanPush()
+{
+	// Check if the character is on walkable floor
+	FFindFloorResult floorResult;
+	FindFloor(UpdatedComponent->GetComponentLocation(), floorResult, false);
+
+	if (!floorResult.bWalkableFloor)
+	{
+		_pushedActor = nullptr;
+		return false;
+	}
+
+	// Check if a movable actor is in front of the player
+	FHitResult hitResult;
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(GetOwner());
+
+	const FVector start = UpdatedComponent->GetComponentLocation();
+	const FVector end = start + UpdatedComponent->GetForwardVector() * ForwardSearchPushingLength;
+
+	if (!GetWorld()->LineTraceSingleByProfile(hitResult, start, end, "BlockAll", params))
+	{
+		_pushedActor = nullptr;
+		return false;
+	}
+
+	const TObjectPtr<AActor> Actor = hitResult.GetActor();
+
+	if (!Actor)
+	{
+		_pushedActor = nullptr;
+		return false;
+	}
+
+	if (Actor->ActorHasTag(MovableTag) == false)
+	{
+		_pushedActor = nullptr;
+		return false;
+	}
+
+	_pushedActor = Cast<AMoveableActor>(Actor);
+	return true;
+}
+
+void UPlayerMovementComponent::PhysPushing(const float DeltaTime, const int32 Iterations)
+{
+	if (_isPushing == false)
+	{
+		// Restore default capsule size
+		const TObjectPtr<ACharacter> defaultCharacter = CharacterOwner->GetClass()->GetDefaultObject<ACharacter>();
+		const float defaultUnscaleRadius = defaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+		const float defaultUnscaleHalfHeight = defaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+		CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(defaultUnscaleRadius, defaultUnscaleHalfHeight);
+		SetMovementMode(DefaultLandMovementMode);
+	}
+
+	PhysWalking(DeltaTime, Iterations);
+}
+
+AMoveableActor* UPlayerMovementComponent::GetPushedActor() const
+{
+	return _pushedActor;
+}
+#pragma endregion
+
+#pragma region "Helper"
+
+float UPlayerMovementComponent::GetSpeed() const
+{
+	return Velocity.Length();
+}
+
+bool UPlayerMovementComponent::IsWalkingCustom() const
+{
+	if (!IsWalking() || FMath::IsNearlyZero(GetSpeed()))
+	{
+		return false;
+	}
+
+	if (IsPushing())
+	{
+		return false;
+	}
+
+	return true;
+}
+bool UPlayerMovementComponent::IsPushing() const
+{
+	return _isPushing;
+}
 
 bool UPlayerMovementComponent::IsCustomMovementMode(const ECustomMovementMode InCustomMovementMode) const
 {
@@ -321,3 +321,35 @@ float UPlayerMovementComponent::GetMaxSpeed() const
 		return maxSpeed;
 	}
 }
+#pragma endregion
+
+#pragma region "Animation"
+void UPlayerMovementComponent::InitAnimations()
+{
+	if (const auto mantleNotify = FindNotifyByClass<UMantleAnimNotify>(_mantleAnimation))
+	{
+		mantleNotify->OnNotified.AddUObject(this, &UPlayerMovementComponent::OnMantleAnimFinished);
+	}
+}
+
+template<typename AnimNotify>
+inline AnimNotify* UPlayerMovementComponent::FindNotifyByClass(const TObjectPtr<UAnimSequenceBase> animation)
+{
+	if (animation == nullptr)
+	{
+		return nullptr;
+	}
+
+	for (FAnimNotifyEvent notifyEvent : animation->Notifies)
+	{
+		if (const auto AnimationNotify = Cast<AnimNotify>(notifyEvent.Notify))
+		{
+			return AnimationNotify;
+		}
+	}
+
+	return nullptr;
+}
+#pragma endregion
+
+

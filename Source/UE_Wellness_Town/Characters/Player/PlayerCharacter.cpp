@@ -188,7 +188,7 @@ void APlayerCharacter::Interact()
 
 void APlayerCharacter::AltInteract()
 {
-	if (_movementComponent->IsPushing() == false || _movementComponent->IsPushingActor() == nullptr)
+	if (_movementComponent->IsPushing() == false || _movementComponent->GetPushedActor() == nullptr)
 	{
 		return;
 	}
@@ -197,7 +197,7 @@ void APlayerCharacter::AltInteract()
 
 	//Disables player rotation if alt interacting, makes the pulling mechanic cleaner
 	_movementComponent->bOrientRotationToMovement = false;
-	_movementComponent->IsPushingActor()->AddForce(this);
+	_movementComponent->GetPushedActor()->AddForce(this);
 }
 
 USpringArmComponent* APlayerCharacter::GetSpringArm()

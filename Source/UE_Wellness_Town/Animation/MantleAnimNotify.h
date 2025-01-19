@@ -14,6 +14,8 @@ class UE_WELLNESS_TOWN_API UMantleAnimNotify : public UAnimNotify
 	GENERATED_BODY()
 	
 public:
-	FOnNotifiedSigature OnNotified;
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
+
+public:
+	FOnNotifiedSigature OnNotified;
 };
