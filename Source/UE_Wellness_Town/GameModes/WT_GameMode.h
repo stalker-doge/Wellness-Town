@@ -25,9 +25,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	TObjectPtr<AJournal> _journal;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	TObjectPtr<UNPC_Manager> _npcManager;
 };

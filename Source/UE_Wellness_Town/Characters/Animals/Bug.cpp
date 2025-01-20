@@ -27,7 +27,7 @@ void ABug::Init(ABugSpawner* spawner)
 
 void ABug::RemoveFromSpawner()
 {
-	if (_spawner != nullptr)
+	if (_spawner.IsValid() == true)
 	{
 		_spawner->Remove(this);
 	}

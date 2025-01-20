@@ -25,8 +25,8 @@ private:
 	bool IsAtWorkPlace();
 
 private:
-	TObjectPtr<UGOAP_Agent> _agent;
-	TObjectPtr<AActor> _workPlace;
+	TWeakObjectPtr<UGOAP_Agent> _agent;
+	TWeakObjectPtr<AActor> _workPlace;
 
 	FVector _target;
 };

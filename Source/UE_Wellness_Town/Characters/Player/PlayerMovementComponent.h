@@ -90,11 +90,10 @@ private:
 	float PushingCapsuleRadius = 75.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Pushing") 
 	FName MovableTag = "movable";
-	TObjectPtr<AMoveableActor> _pushedActor;
+	TWeakObjectPtr<AMoveableActor> _pushedActor;
 	bool _isPushing;
 
-	UPROPERTY()
-	TObjectPtr<APlayerCharacter> _player;
+	TWeakObjectPtr<APlayerCharacter> _player;
 
 	int _rootMotionSourceID;
 	TSharedPtr<FRootMotionSource_MoveToForce> _rootMotionSource;

@@ -11,7 +11,7 @@
 void UBugCatcherWorkStrategy::Start(UGOAP_Agent* agent)
 {
 	_agent = agent;
-	_npc = _agent->_owner;
+	_npc = _agent->GetNPC();
 
 	if (_bugNet == nullptr)
 	{
@@ -48,13 +48,13 @@ void UBugCatcherWorkStrategy::Update(float deltaTime)
 
 	_timer = 0;
 
-	if (_target != nullptr)
+	if (_target.IsValid() == true)
 	{
 		_agent->SetDestination(_target->GetActorLocation());
 
 		if (IsInTargetRange() == true)
 		{
-			_agent->_owner->UseItem(nullptr);
+			_agent->GetNPC()->UseItem(nullptr);
 			_sensor->UpdateClosestBug();
 			_target = nullptr;
 		}
@@ -79,7 +79,7 @@ void UBugCatcherWorkStrategy::Stop()
 
 bool UBugCatcherWorkStrategy::Complete()
 {
-	return !_agent->_isWorkHours;
+	return !_agent->IsWorkHours();
 }
 
 void UBugCatcherWorkStrategy::CreateSensor()
@@ -93,7 +93,7 @@ void UBugCatcherWorkStrategy::CreateSensor()
 
 bool UBugCatcherWorkStrategy::IsInTargetRange()
 {
-	if (_target == nullptr)
+	if (_target.IsValid() == false)
 	{
 		return false;
 	}

@@ -36,7 +36,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<ADestroyOnCollisionActor>> _loot;
 
-	TObjectPtr<AActor> _owner;
+	TWeakObjectPtr<AActor> _owner;
 
 	FVector _end;
 

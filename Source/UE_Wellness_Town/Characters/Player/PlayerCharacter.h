@@ -25,89 +25,88 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
-	UFUNCTION(BlueprintCallable)
-	UCameraComponent* GetCamera();
-
-	void PickUp(AItem* actor);
-	void DropHeldItem();
-	void CastHeldItem();
-	void IsReadyToCast();
-	void ThrowHeldItem();
-	void IsReadyToThrow();
-
-	void Interact();
-	void AltInteract();
-
-	USpringArmComponent* GetSpringArm();
-
-	UFUNCTION(BlueprintCallable)
-	AActor* GetInteractTarget();
-
-	UFUNCTION(BlueprintCallable)
-	float GetMaxSpeed();
-
+	//---- MOVEMENT ----
 	UFUNCTION(BlueprintCallable)
 	void EnableMovement();
 	UFUNCTION(BlueprintCallable)
 	void DisableMovement();
 
+	//---- ITEM ----
+	void PickUp(AItem* actor);
+	void DropHeldItem();
+	void CastHeldItem();
+	void ThrowHeldItem();
+
+	//---- INTERACTION ----
+	void Interact();
+	void AltInteract();
 	UFUNCTION()
 	void BeginInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void EndInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact Collider")
-	TObjectPtr<USphereComponent> _interactCollider;
+	//---- HELPER ----
+	UFUNCTION(BlueprintCallable)
+	AActor* GetInteractTarget();
+	UFUNCTION(BlueprintCallable)
+	float GetMaxSpeed() const;
+	UFUNCTION(BlueprintCallable)
+	UCameraComponent* GetCamera();
+	UFUNCTION(BlueprintCallable)
+	USpringArmComponent* GetSpringArm();
+	UFUNCTION(BlueprintCallable)
+	USphereComponent* GetInteractCollider();
+	void IsReadyToCast();
+	void IsReadyToThrow();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	bool IsAltInteracting;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//Below functions manages throwing trajectory
+	//---- SPLINE HANDLING ----
 	//Creates the visual for the spline if needed
 	void DrawTrajectory();
 	void CreateSpline(FVector start, FVector unitDirection, float strength, int simTime, bool toDebug);
 	void ClearSpline();
 private:
+	///---- STATS ----
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float _throwStrength;
 
-	UPROPERTY(EditAnywhere)
+	//---- COMPONENTS ----
+	UPROPERTY(EditAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> _camera;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Camera")
 	TObjectPtr<USpringArmComponent> _springArmComponent;
-
+	UPROPERTY(EditDefaultsOnly, Category = "Minimap")
+	TObjectPtr<UMinimapComponent> _minimap;
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	TObjectPtr<USphereComponent> _interactCollider;
 	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPlayerMovementComponent> _movementComponent;
+
+	//---- SPLINE ----
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> _splineMesh;
+	TArray<TObjectPtr<AActor>> _splineMeshes;
+	TObjectPtr<USplineComponent> _splineComponent;
+
+	//---- UI ----
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPlayerHUD> _hudDefault;
 	TObjectPtr<UPlayerHUD> _playerHUD;
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UMinimapComponent> _minimap;
-
-	UPROPERTY()
-	TObjectPtr<UPlayerMovementComponent> _movementComponent;
-
-	TObjectPtr<AActor> _currentInteractTarget;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> _splineMesh;
-
-	TObjectPtr<USplineComponent> _splineComponent;
-	TArray<TObjectPtr<AActor>> _splineMeshes;
-
-	UPROPERTY(EditAnywhere)
-	float _throwStrength;
-
-	TObjectPtr<AItem> _heldObject;
-	float _timer;
+	TWeakObjectPtr<AItem> _heldObject;
+	TWeakObjectPtr<AActor> _currentInteractTarget;
 
 	FVector _lastLocation;
 	FRotator _lastRotation;
 
 	bool _drawTrajectory;
+	bool _isAltInteracting;
+	float _timer;
 };

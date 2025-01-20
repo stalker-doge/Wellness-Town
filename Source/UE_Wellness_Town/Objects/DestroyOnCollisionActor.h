@@ -37,5 +37,5 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> _staticMesh;
 
-	TObjectPtr<AActor> _collisionTarget;
+	TWeakObjectPtr<AActor> _collisionTarget;
 };

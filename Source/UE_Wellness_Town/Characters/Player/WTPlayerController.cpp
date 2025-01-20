@@ -15,10 +15,7 @@ void AWTPlayerController::OnPossess(APawn* aPawn)
 	Super::OnPossess(aPawn);
 
 	_playerCharacter = Cast<APlayerCharacter>(aPawn);
-	checkf(_playerCharacter, TEXT("PLAYER_CHARACTER is an invalid value"));
-
 	_movementComponent = _playerCharacter->GetCharacterMovement();
-	checkf(_movementComponent, TEXT("MOVEMENT_COMPONENT is an invalid value"));
 
 	_enhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	checkf(_enhancedInputComponent, TEXT("ENHANCED_INPUT_COMPONENT is an invalid value"));

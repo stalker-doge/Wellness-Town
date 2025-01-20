@@ -44,7 +44,7 @@ void UJournalWidget::NextPage()
 	UpdatePage();
 }
 
-//Updates page data, needs to manage the images and clear the last empty page if there are an odd number of NPCs
+//Updates page data, needs to manage the images (when added) and clear the last empty page if there are an odd number of NPCs
 void UJournalWidget::UpdatePage()
 {
 	_maxPage = _npcData.Num();

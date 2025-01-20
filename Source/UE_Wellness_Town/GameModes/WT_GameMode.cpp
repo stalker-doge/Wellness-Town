@@ -5,7 +5,6 @@
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/Actor.h"
 #include "UE_Wellness_Town/Characters/NPCs/NPC_Manager.h"
-#include "UE_Wellness_Town/Utility/TimeManager.h"
 #include "UE_Wellness_Town/Objects/Journal.h"
 #include "Kismet/GameplayStatics.h"
 

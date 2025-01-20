@@ -9,13 +9,15 @@
 void UWanderStrategy::Start(UGOAP_Agent* agent)
 {
     _agent = agent;
-    _navSystem = UNavigationSystemV1::GetNavigationSystem(_agent->_owner->GetWorld());
+    _navSystem = UNavigationSystemV1::GetNavigationSystem(_agent->GetNPC()->GetWorld());
     _timer = 0;
     _delayBetweenPathing = 1;
 }
 
 void UWanderStrategy::Update(float deltaTime)
 {
+	GEngine->AddOnScreenDebugMessage(20, 1, FColor::Blue, FString::Printf(TEXT("Wandering")));
+
 	if (_agent->HasPath() == true)
 	{
 		return;
@@ -26,7 +28,7 @@ void UWanderStrategy::Update(float deltaTime)
 	if (_timer >= _delayBetweenPathing)
 	{
 		FNavLocation location;
-		_navSystem->GetRandomPointInNavigableRadius(_agent->_owner->GetActorLocation(), 500, location);
+		_navSystem->GetRandomPointInNavigableRadius(_agent->GetNPC()->GetActorLocation(), 500, location);
 
 		_agent->SetDestination(location);
 		_timer = 0;
@@ -36,10 +38,10 @@ void UWanderStrategy::Update(float deltaTime)
 void UWanderStrategy::Stop()
 {
 	_timer = 0;
-	_agent->SetDestination(_agent->_owner->GetActorLocation());
+	_agent->SetDestination(_agent->GetNPC()->GetActorLocation());
 }
 
 bool UWanderStrategy::Complete()
 {
-    return _agent->_isWorkHours || _agent->_isSleepHours;
+    return _agent->IsWorkHours() || _agent->IsSleepHours();
 }

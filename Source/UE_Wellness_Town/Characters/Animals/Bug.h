@@ -37,5 +37,5 @@ private:
 
 	TObjectPtr<UNavigationSystemV1> _navSystem;
 	TObjectPtr<AAIController> _controller;
-	TObjectPtr<ABugSpawner> _spawner;
+	TWeakObjectPtr<ABugSpawner> _spawner;
 };

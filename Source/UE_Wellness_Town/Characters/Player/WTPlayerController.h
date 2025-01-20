@@ -75,9 +75,6 @@ private:
 	UPROPERTY()
 	TObjectPtr<UEnhancedInputComponent> _enhancedInputComponent;
 
-	UPROPERTY()
-	TObjectPtr<APlayerCharacter> _playerCharacter;
-
-	UPROPERTY()
-	TObjectPtr<UCharacterMovementComponent> _movementComponent;
+	TWeakObjectPtr<APlayerCharacter> _playerCharacter;
+	TWeakObjectPtr<UCharacterMovementComponent> _movementComponent;
 };

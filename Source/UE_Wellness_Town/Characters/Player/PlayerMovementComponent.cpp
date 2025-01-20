@@ -13,7 +13,6 @@ void UPlayerMovementComponent::InitializeComponent()
 	Super::InitializeComponent();
 
 	_player = Cast<APlayerCharacter>(GetOwner());
-	check(_player);
 
 	_lastMode = EMovementMode::MOVE_Walking;
 	InitAnimations();
@@ -172,7 +171,6 @@ void UPlayerMovementComponent::TryMantle()
 	SetMovementMode(MOVE_Flying);
 	_rootMotionSourceID = ApplyRootMotionSource(_rootMotionSource);
 
-
 	_player->PlayAnimMontage(_mantleAnimation);
 }
 
@@ -259,7 +257,7 @@ void UPlayerMovementComponent::PhysPushing(const float DeltaTime, const int32 It
 
 AMoveableActor* UPlayerMovementComponent::GetPushedActor() const
 {
-	return _pushedActor;
+	return _pushedActor.Get();
 }
 #pragma endregion
 

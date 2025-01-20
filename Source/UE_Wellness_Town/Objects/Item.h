@@ -42,7 +42,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Static Mesh")
 	TObjectPtr<UStaticMeshComponent> _staticMesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	bool _isCastable;
+
 	bool _displaySpline;
 };

@@ -6,7 +6,6 @@
 #include "UE_Wellness_Town/Objects/Item.h"
 #include "BugNet.generated.h"
 
-class APlayerCharacter;
 class USphereComponent;
 
 UCLASS()
@@ -27,8 +26,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	TObjectPtr<APlayerCharacter> _player;
-
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> _collisionSphere;
 };

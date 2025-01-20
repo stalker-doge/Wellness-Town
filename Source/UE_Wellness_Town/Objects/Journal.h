@@ -32,16 +32,14 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere)
-	int _maxPage;
-
-	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> _staticMesh;
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UNPC_Manager> _npcManager;
-
- 	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UJournalWidget> _journalWidgetDefault;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	TObjectPtr<UJournalWidget> _journalWidget;
+
+	TWeakObjectPtr<UNPC_Manager> _npcManager;
+
+	int _maxPage;
 };

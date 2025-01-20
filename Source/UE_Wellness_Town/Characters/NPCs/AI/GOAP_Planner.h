@@ -21,5 +21,7 @@ public:
 	UGOAP_Planner();
 
 	UGOAP_Plan* Plan(UGOAP_Agent* agent, TArray<UGOAP_Goal*> goals, UGOAP_Goal* lastGoal);
+
+private:
 	bool FindPath(UGOAP_Node* parent, TArray<UGOAP_Action*> actions);
 };

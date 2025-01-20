@@ -52,14 +52,22 @@ APlayerCharacter::APlayerCharacter()
 	_heldObject = nullptr;
 }
 
-UCameraComponent* APlayerCharacter::GetCamera()
+#pragma region "Movement"
+void APlayerCharacter::EnableMovement()
 {
-	return _camera;
+	Cast<UPlayerMovementComponent>(GetMovementComponent())->EnableMovement();
 }
 
+void APlayerCharacter::DisableMovement()
+{
+	Cast<UPlayerMovementComponent>(GetMovementComponent())->DisableMovement();
+}
+#pragma endregion
+
+#pragma region "Item"
 void APlayerCharacter::PickUp(AItem* actor)
 {
-	if (_heldObject != nullptr)
+	if (_heldObject.IsValid() == true)
 	{
 		DropHeldItem();
 	}
@@ -73,7 +81,7 @@ void APlayerCharacter::PickUp(AItem* actor)
 
 void APlayerCharacter::DropHeldItem()
 {
-	if (_heldObject == nullptr)
+	if (_heldObject.IsValid() == false)
 	{
 		return;
 	}
@@ -89,7 +97,7 @@ void APlayerCharacter::DropHeldItem()
 
 void APlayerCharacter::CastHeldItem()
 {
-	if (_heldObject == nullptr || _heldObject->IsCastable() == false)
+	if (_heldObject.IsValid() == false || _heldObject->IsCastable() == false)
 	{
 		return;
 	}
@@ -123,19 +131,9 @@ void APlayerCharacter::CastHeldItem()
 	_drawTrajectory = false;
 }
 
-void APlayerCharacter::IsReadyToCast()
-{
-	if (_heldObject == nullptr || _heldObject->IsCastable() == false || _heldObject->DisplaySpline() == false)
-	{
-		return;
-	}
-
-	_drawTrajectory = true;
-}
-
 void APlayerCharacter::ThrowHeldItem()
 {
-	if (_heldObject == nullptr)
+	if (_heldObject.IsValid() == false)
 	{
 		return;
 	}
@@ -151,27 +149,19 @@ void APlayerCharacter::ThrowHeldItem()
 
 	_heldObject->GetStaticMesh()->SetPhysicsLinearVelocity(unitDirection * _throwStrength);
 }
+#pragma endregion
 
-void APlayerCharacter::IsReadyToThrow()
-{
-	if (_heldObject == nullptr)
-	{
-		return;
-	}
-
-	_drawTrajectory = true;
-}
-
+#pragma region "Interaction"
 void APlayerCharacter::Interact()
 {
-	if (IsAltInteracting == true)
+	if (_isAltInteracting == true)
 	{
 		_movementComponent->bOrientRotationToMovement = true;
-		IsAltInteracting = false;
+		_isAltInteracting = false;
 		return;
 	}
 
-	if (_currentInteractTarget == nullptr)
+	if (_currentInteractTarget.IsValid() == false)
 	{
 		return;
 	}
@@ -193,36 +183,11 @@ void APlayerCharacter::AltInteract()
 		return;
 	}
 
-	IsAltInteracting = true;
+	_isAltInteracting = true;
 
 	//Disables player rotation if alt interacting, makes the pulling mechanic cleaner
 	_movementComponent->bOrientRotationToMovement = false;
 	_movementComponent->GetPushedActor()->AddForce(this);
-}
-
-USpringArmComponent* APlayerCharacter::GetSpringArm()
-{
-	return _springArmComponent;
-}
-
-AActor* APlayerCharacter::GetInteractTarget()
-{
-	return _currentInteractTarget;
-}
-
-float APlayerCharacter::GetMaxSpeed()
-{
-	return _movementComponent->MaxWalkSpeed;
-}
-
-void APlayerCharacter::EnableMovement()
-{
-	Cast<UPlayerMovementComponent>(GetMovementComponent())->EnableMovement();
-}
-
-void APlayerCharacter::DisableMovement()
-{
-	Cast<UPlayerMovementComponent>(GetMovementComponent())->DisableMovement();
 }
 
 void APlayerCharacter::BeginInteractOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -232,7 +197,7 @@ void APlayerCharacter::BeginInteractOverlap(UPrimitiveComponent* OverlappedCompo
 		return;
 	}
 
-	if (_currentInteractTarget == nullptr)
+	if (_currentInteractTarget.IsValid() == false)
 	{
 		_currentInteractTarget = OtherActor;
 	}
@@ -250,24 +215,56 @@ void APlayerCharacter::EndInteractOverlap(UPrimitiveComponent* OverlappedCompone
 		_currentInteractTarget = nullptr;
 	}
 }
+#pragma endregion
 
-// Called when the game starts or when spawned
-void APlayerCharacter::BeginPlay()
+#pragma region "Helper"
+AActor* APlayerCharacter::GetInteractTarget()
 {
-	Super::BeginPlay();
-	
-	_movementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
-	checkf(_movementComponent, TEXT("Movement Component is an invalid value"));
-
-	_interactCollider->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::BeginInteractOverlap);
-	_interactCollider->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::EndInteractOverlap);
-
-	checkf(_hudDefault, TEXT("Missing Player HUD"));
-	_playerHUD = CreateWidget<UPlayerHUD>(GetController<AWTPlayerController>(), _hudDefault);
-	checkf(_playerHUD, TEXT("Failed to Create Player HUD"));
-	_playerHUD->AddToPlayerScreen();
+	return _currentInteractTarget.Get();
 }
 
+float APlayerCharacter::GetMaxSpeed() const
+{
+	return _movementComponent->MaxWalkSpeed;
+}
+
+UCameraComponent* APlayerCharacter::GetCamera()
+{
+	return _camera;
+}
+
+USpringArmComponent* APlayerCharacter::GetSpringArm()
+{
+	return _springArmComponent;
+}
+
+USphereComponent* APlayerCharacter::GetInteractCollider()
+{
+	return _interactCollider;
+}
+
+void APlayerCharacter::IsReadyToCast()
+{
+	if (_heldObject.IsValid() == false || _heldObject->IsCastable() == false || _heldObject->DisplaySpline() == false)
+	{
+		return;
+	}
+
+	_drawTrajectory = true;
+}
+
+void APlayerCharacter::IsReadyToThrow()
+{
+	if (_heldObject.IsValid() == false)
+	{
+		return;
+	}
+
+	_drawTrajectory = true;
+}
+#pragma endregion
+
+#pragma region "Spline"
 void APlayerCharacter::DrawTrajectory()
 {
 	if (_lastLocation == GetActorLocation() && _lastRotation == GetActorRotation())
@@ -283,7 +280,7 @@ void APlayerCharacter::DrawTrajectory()
 	unitDirection.Normalize();
 
 	CreateSpline(start, unitDirection, _throwStrength, 3, false);
-	
+
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
@@ -316,7 +313,7 @@ void APlayerCharacter::CreateSpline(FVector start, FVector unitDirection, float 
 	}
 
 	FPredictProjectilePathResult result;
-	UGameplayStatics::PredictProjectilePath(_heldObject, params, result);
+	UGameplayStatics::PredictProjectilePath(_heldObject.Get(), params, result);
 
 	for (int i = 0; i < result.PathData.Num(); i++)
 	{
@@ -339,6 +336,24 @@ void APlayerCharacter::ClearSpline()
 
 	_drawTrajectory = false;
 }
+#pragma endregion
+
+// Called when the game starts or when spawned
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	_movementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	checkf(_movementComponent, TEXT("Movement Component is an invalid value"));
+
+	_interactCollider->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::BeginInteractOverlap);
+	_interactCollider->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::EndInteractOverlap);
+
+	checkf(_hudDefault, TEXT("Missing Player HUD"));
+	_playerHUD = CreateWidget<UPlayerHUD>(GetController<AWTPlayerController>(), _hudDefault);
+	checkf(_playerHUD, TEXT("Failed to Create Player HUD"));
+	_playerHUD->AddToPlayerScreen();
+}
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
@@ -347,7 +362,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	_timer += DeltaTime;
 
-	GEngine->AddOnScreenDebugMessage(1, 10, FColor::Red, FString::Printf(TEXT("CurrentTarget: %s"), _currentInteractTarget ? *_currentInteractTarget->GetName() : TEXT("NONE")));
+	GEngine->AddOnScreenDebugMessage(1, 10, FColor::Red, FString::Printf(TEXT("CurrentTarget: %s"), _currentInteractTarget.Get() ? *_currentInteractTarget->GetName() : TEXT("NONE")));
 
 	// Periodically checks if the trajectory should be drawn and checks whether or not the player is near interactable actors
 	if (_timer < 0.05f)
@@ -378,7 +393,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 			continue;
 		}
 
-		if (_currentInteractTarget == nullptr)
+		if (_currentInteractTarget.IsValid() == false)
 		{
 			_currentInteractTarget = actor;
 			continue;

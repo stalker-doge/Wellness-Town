@@ -19,8 +19,6 @@ void UNPC_Manager::PopulateNPCData(UWorld* world)
 	{
 		_npcData.Add(Cast<ANPC_Base>(actor)->GetNPCData());
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, FString::Printf(TEXT("%03d"), _npcData.Num()));
 }
 
 TArray<UNPC_Data*> UNPC_Manager::GetNPCData()

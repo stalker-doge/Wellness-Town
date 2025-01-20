@@ -28,10 +28,10 @@ UGOAP_Plan* UGOAP_Planner::Plan(UGOAP_Agent* agent, TArray<UGOAP_Goal*> goals, U
 
 	for (UGOAP_Goal* goal : orderedGoals)
 	{
-		UGOAP_Node* goalNode = NewObject<UGOAP_Node>();
+		TObjectPtr<UGOAP_Node> goalNode = NewObject<UGOAP_Node>();
 		goalNode->Init(nullptr, nullptr, goal->_desiredEffects, 0);
 
-		if (FindPath(goalNode, agent->_actions) == true)
+		if (FindPath(goalNode, agent->GetActions()) == true)
 		{
 			if (goalNode->IsDead() == true)
 			{
@@ -43,13 +43,13 @@ UGOAP_Plan* UGOAP_Planner::Plan(UGOAP_Agent* agent, TArray<UGOAP_Goal*> goals, U
 			while (goalNode->neighbours.Num() > 0)
 			{
 				goalNode->neighbours.Sort([](const UGOAP_Node& a, const UGOAP_Node& b) { return a.cost < b.cost; });
-				UGOAP_Node* cheapestNeighbour = goalNode->neighbours.Pop();
+				TObjectPtr<UGOAP_Node> cheapestNeighbour = goalNode->neighbours.Pop();
 
 				goalNode = cheapestNeighbour;
-				actionStack.Push(cheapestNeighbour->action);
+				actionStack.Push(cheapestNeighbour->action.Get());
 			}
 
-			UGOAP_Plan* plan = NewObject<UGOAP_Plan>();
+			TObjectPtr<UGOAP_Plan> plan = NewObject<UGOAP_Plan>();
 			plan->Init(goal, actionStack, goalNode->cost);
 
 			return plan;
@@ -90,7 +90,7 @@ bool UGOAP_Planner::FindPath(UGOAP_Node* parent, TArray<UGOAP_Action*> actions)
 			TArray<UGOAP_Action*> newAvailableActions = TArray<UGOAP_Action*>(actions);
 			newAvailableActions.Remove(action);
 
-			UGOAP_Node* newNode = NewObject<UGOAP_Node>();
+			TObjectPtr<UGOAP_Node> newNode = NewObject<UGOAP_Node>();
 			newNode->Init(parent, action, *newRequiredEffects, parent->cost + action->_cost);
 
 			if (FindPath(newNode, newAvailableActions) == true)

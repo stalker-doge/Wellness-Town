@@ -26,7 +26,7 @@ public:
 
 	class UE_WELLNESS_TOWN_API Builder
 	{
-		TObjectPtr<UGOAP_Action> action;
+		TWeakObjectPtr<UGOAP_Action> action;
 
 	public:
 
@@ -53,11 +53,11 @@ public:
 		Builder AddEffect(UGOAP_Belief* effect)
 		{
 			action->_effects.Add(effect);
-			return *this;
+			return *this; 
 		}
 		UGOAP_Action* Build()
 		{
-			return action;
+			return action.Get();
 		}
 	};
 public:

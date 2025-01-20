@@ -33,11 +33,12 @@ private:
 	void DespawnBugs();
 
 private:	
-	TObjectPtr<APlayerCharacter> _player;
+	TWeakObjectPtr<APlayerCharacter> _player;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ABug> _bugDefault;
-
+	UPROPERTY(EditDefaultsOnly)
+	int _maxSpawnCount;
 	UPROPERTY(EditDefaultsOnly)
 	float _despawnDelay;
 	UPROPERTY(EditDefaultsOnly)
@@ -46,9 +47,11 @@ private:
 	float _spawnDelay;
 	UPROPERTY(EditDefaultsOnly)
 	float _timerOffset;
-	TArray<TObjectPtr<ABug>> _spawnedBugs;
+
+	TArray<TWeakObjectPtr<ABug>> _spawnedBugs;
 	float _despawnTimer;
 	float _timer;
 
+	int _spawnCount;
 	bool _playerInRange;
 };
