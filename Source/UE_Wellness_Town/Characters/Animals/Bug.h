@@ -21,6 +21,7 @@ public:
 	ABug();
 	void Init(ABugSpawner* spawner);
 	void RemoveFromSpawner();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -33,8 +34,8 @@ protected:
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> _bugMesh;
-	TObjectPtr<UNavigationSystemV1> _navSystem;
 
+	TObjectPtr<UNavigationSystemV1> _navSystem;
 	TObjectPtr<AAIController> _controller;
-	TObjectPtr<ABugSpawner> _spawner;
+	TWeakObjectPtr<ABugSpawner> _spawner;
 };

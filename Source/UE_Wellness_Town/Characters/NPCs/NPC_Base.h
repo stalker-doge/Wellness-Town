@@ -27,37 +27,34 @@ public:
 	// Sets default values for this character's properties
 	ANPC_Base();
 
+	void ToggleVisibility(bool val);
+
+	//---- AI ----
 	UFUNCTION(BlueprintCallable)
 	void SetDestination(FVector destination);
-	UFUNCTION(BlueprintCallable)
-	FVector GetCurrentDestination();
-
-	// Pauses movement in the controller. Used only for AI related actions (such as fishing). Pause AI instead if you want to prevent moving in general. false resumes movement.
+	// Pauses movement in the controller. Used only for AI controlled actions (such as fishing). Pause AI instead if you want to prevent moving in general (for quest related reason, as an example). False resumes movement.
 	UFUNCTION(BlueprintCallable)
 	void SetPauseMovement(bool val);
-	// Checks if the NPC has a path
-	UFUNCTION(BlueprintCallable)
-	bool HasPath();
-
 	// Sets it the AI is paused
 	UFUNCTION(BlueprintCallable)
 	void SetPauseAI(bool val);
-
 	UFUNCTION(BlueprintCallable)
 	void SetMood(Mood mood);
 
+	//---- ITEM ----
 	void UseItem(USplineComponent* path);
 	void PickUp(AItem* item);
 	void DropItem();
 
-	bool IsInPlayerRange();
-
-	USplineComponent* GetSplineComponent();
-
+	//---- HELPER ----
 	UFUNCTION(BlueprintCallable, Category = "NPC Data")
 	UNPC_Data* GetNPCData();
-
-	void ToggleVisibility(bool val);
+	UFUNCTION(BlueprintCallable)
+	FVector GetCurrentDestination() const;
+	USplineComponent* GetSplineComponent();
+	UFUNCTION(BlueprintCallable)
+	bool HasPath() const;
+	bool IsInPlayerRange();
 
 	virtual void Interact(APlayerCharacter* player) override;
 	// Called every frame
@@ -70,43 +67,35 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere)
+	//---- STATS ----
+	UPROPERTY(EditDefaultsOnly)
+	float _hideDistanceFromPlayer;
+
+	//---- AI ----
+	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<UNPC_Data> _data;
-
-	// Dialogue component default reference
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UDialogueSystem> _dialogueDefault;
-
-	// Created copy of the default reference, this setup was just for testing and should be changed/removed if unneccessary 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UDialogueSystem> _dialogueComponent;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<UGOAP_Agent> _agent;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<AAIController> _controller;
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	Mood _startingMood;
+	Mood _mood;
 
-	UPROPERTY()
-	TObjectPtr<AItem> _heldObject;
-
+	//---- ITEM ----
+	TWeakObjectPtr<AItem> _heldObject;
 	UPROPERTY()
 	TObjectPtr<USplineComponent> _splineComponent;
+
+	//---- VFX ----
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraComponent> _niagara;
 	UPROPERTY(EditAnywhere)
 	TMap<Mood, TObjectPtr<UNiagaraSystem>> _niagaraSystems;
 
-	UPROPERTY(EditAnywhere)
-	Mood _startingMood;
-	Mood _mood;
-
-	UPROPERTY()
-	TObjectPtr<APlayerCharacter> _player;
-	UPROPERTY(EditAnywhere)
-	float _hideDistanceFromPlayer;
-
-	float _timer;
+	TWeakObjectPtr<APlayerCharacter> _player;
 
 	FVector _currentDestination;
+
+	float _timer;
 };

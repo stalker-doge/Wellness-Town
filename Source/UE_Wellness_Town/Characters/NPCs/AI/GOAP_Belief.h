@@ -24,7 +24,7 @@ public:
 
 	class UE_WELLNESS_TOWN_API Builder
 	{
-		TObjectPtr<UGOAP_Belief> belief;
+		TWeakObjectPtr<UGOAP_Belief> belief;
 
 	public:
 		Builder(FString name)
@@ -46,7 +46,7 @@ public:
 
 		UGOAP_Belief* Build()
 		{
-			return belief;
+			return belief.Get();
 		}
 	};
 

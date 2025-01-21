@@ -13,7 +13,7 @@ void USleepStrategy::Start(UGOAP_Agent* agent)
 
 void USleepStrategy::Update(float deltaTime)
 {
-
+	GEngine->AddOnScreenDebugMessage(20, 1, FColor::Blue, FString::Printf(TEXT("Sleeping")));
 }
 
 void USleepStrategy::Stop()
@@ -24,14 +24,14 @@ void USleepStrategy::Stop()
 
 bool USleepStrategy::Complete()
 {
-	return !_agent->_isSleepHours;
+	return !_agent->IsSleepHours();
 }
 
 void USleepStrategy::ToggleSleep(bool isSleeping)
 {
-	if (_agent->_owner->IsInPlayerRange() == true)
+	if (_agent->GetNPC()->IsInPlayerRange() == true)
 	{
-		_agent->_owner->ToggleVisibility(!isSleeping);
+		_agent->GetNPC()->ToggleVisibility(!isSleeping);
 	}
 
 	if (isSleeping == true)

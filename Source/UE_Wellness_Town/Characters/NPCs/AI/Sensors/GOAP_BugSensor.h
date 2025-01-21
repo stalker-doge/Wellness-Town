@@ -41,10 +41,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> _sensor;
 
-	UPROPERTY()
-	TObjectPtr<AActor> _owner;
-	UPROPERTY()
-	TObjectPtr<ABug> _closestBug;
+	TWeakObjectPtr<AActor> _owner;
+	TWeakObjectPtr<ABug> _closestBug;
 
 	float _radius;
 	bool _isActive;

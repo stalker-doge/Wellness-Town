@@ -19,16 +19,14 @@ public:
 	AWT_GameMode();
 
 	UNPC_Manager* GetNPCManager();
-	UTimeManager* GetTimeManager();
 
 	virtual void Tick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	TObjectPtr<AJournal> _journal;
-
+	UPROPERTY()
 	TObjectPtr<UNPC_Manager> _npcManager;
-	TObjectPtr<UTimeManager> _timeManager;
 };

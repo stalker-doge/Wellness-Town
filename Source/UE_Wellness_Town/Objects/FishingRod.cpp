@@ -32,7 +32,7 @@ void AFishingRod::CatchLoot()
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	TObjectPtr<ADestroyOnCollisionActor> loot = GetWorld()->SpawnActor<ADestroyOnCollisionActor>(*toSpawn, _end, FRotator::ZeroRotator, spawnParams);
-	loot->SetCollisionTarget(_owner);
+	loot->SetCollisionTarget(_owner.Get());
 
 	//Faces the loot towards the player
 	FVector dir = _owner->GetActorLocation() - loot->GetActorLocation();
@@ -74,8 +74,6 @@ bool AFishingRod::ItemCast(AActor* player, USplineComponent* path, bool isPlayer
 		{
 			for (AActor* data : hitData)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, data->GetName());
-
 				if (data->Tags.Contains("Water") == false)
 				{
 					return false;

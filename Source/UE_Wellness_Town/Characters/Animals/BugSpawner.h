@@ -26,32 +26,32 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+private:
 	bool CheckIfPlayerInRange();
 
 	void SpawnBug();
 	void DespawnBugs();
 
 private:	
-	TObjectPtr<APlayerCharacter> _player;
+	TWeakObjectPtr<APlayerCharacter> _player;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ABug> _bugDefault;
-
-	TArray<TObjectPtr<ABug>> _spawnedBugs;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
+	int _maxSpawnCount;
+	UPROPERTY(EditDefaultsOnly)
 	float _despawnDelay;
-
-	float _despawnTimer;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float _activeRadiusFromPlayer;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float _spawnDelay;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float _timerOffset;
 
+	TArray<TWeakObjectPtr<ABug>> _spawnedBugs;
+	float _despawnTimer;
 	float _timer;
 
+	int _spawnCount;
 	bool _playerInRange;
 };

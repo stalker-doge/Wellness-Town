@@ -25,8 +25,8 @@ private:
 	bool IsAtHome();
 
 private:
-	TObjectPtr<UGOAP_Agent> _agent;
-	TObjectPtr<AActor> _home;
+	TWeakObjectPtr<UGOAP_Agent> _agent;
+	TWeakObjectPtr<AActor> _home;
 
 	FVector _target;
 };

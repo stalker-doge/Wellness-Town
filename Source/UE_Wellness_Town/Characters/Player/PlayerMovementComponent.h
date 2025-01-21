@@ -23,67 +23,48 @@ class UE_WELLNESS_TOWN_API UPlayerMovementComponent : public UCharacterMovementC
 	GENERATED_BODY()
 	
 public:
+	//--- MOVEMENT ----
 	virtual void UpdateCharacterStateBeforeMovement(float DeltaSeconds) override;
 	virtual void UpdateCharacterStateAfterMovement(float DeltaSeconds) override;
-
-	// Blueprint Animation
-	UFUNCTION(BlueprintPure) 
-	float GetSpeed() const;
-	UFUNCTION(BlueprintPure) 
-	bool IsWalk() const;
-	UFUNCTION(BlueprintPure) 
-	bool IsPushing() const { return _isPushing; }
-
 	void EnableMovement();
 	void DisableMovement();
 
-	//Mantling
-	int RootMotionSourceID;
-	TSharedPtr<FRootMotionSource_MoveToForce> RootMotionSource;
+	//---- MANTLING ----
 	//Checks if the player should be mantling
 	void TryMantle();
 	void OnMantleAnimFinished();
 
+	//---- PUSHING ----
 	//Checks if the player should be pushing
 	void TryPushing();
 	bool CanPush();
 	//Updates physics for pushing
 	void PhysPushing(float DeltaTime, int32 Iterations);
-	AMoveableActor* IsPushingActor();
+	AMoveableActor* GetPushedActor() const;
 
+	//---- HELPER ----
+	UFUNCTION(BlueprintPure)
+	float GetSpeed() const;
+	UFUNCTION(BlueprintPure)
+	bool IsWalkingCustom() const;
+	UFUNCTION(BlueprintPure)
+	bool IsPushing() const;
 	bool IsCustomMovementMode(const ECustomMovementMode InCustomMovementMode) const;
 	float GetCapsuleRadius() const;
 	float GetCapsuleHalfHeight() const;
 	virtual float GetMaxSpeed() const override;
 
+	//---- ANIMATION ----
 	void InitAnimations();
 	template<typename AnimNotify>
-	AnimNotify* FindNotifyByClass(const TObjectPtr<UAnimSequenceBase> animation)
-	{
-		if (animation == nullptr)
-		{
-			return nullptr;
-		}
-
-		for (FAnimNotifyEvent notifyEvent : animation->Notifies)
-		{
-			if (const auto AnimationNotify = Cast<AnimNotify>(notifyEvent.Notify))
-			{
-				return AnimationNotify;
-			}
-		}
-
-		return nullptr;
-	}
+	AnimNotify* FindNotifyByClass(const TObjectPtr<UAnimSequenceBase> animation);
 
 protected:
 	virtual void InitializeComponent() override;
 	virtual void PhysCustom(float deltaTime, int32 Iterations) override;
 
 private:
-	UPROPERTY()
-	TObjectPtr<APlayerCharacter> _player;
-
+	//---- MANTLING ----
 	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
 	float _maxFrontMantleCheckDistance = 50;
 	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
@@ -100,7 +81,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
 	TObjectPtr<UAnimMontage> _mantleAnimation;
 
-	// Pushing
+	//---- PUSHING ----
 	UPROPERTY(EditDefaultsOnly, Category = "Pushing") 
 	float MaxPushingSpeed = 50.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Pushing") 
@@ -109,8 +90,15 @@ private:
 	float PushingCapsuleRadius = 75.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Pushing") 
 	FName MovableTag = "movable";
-	EMovementMode _lastMode;
-
-	TObjectPtr<AMoveableActor> _pushingActor;
+	TWeakObjectPtr<AMoveableActor> _pushedActor;
 	bool _isPushing;
+
+	TWeakObjectPtr<APlayerCharacter> _player;
+
+	int _rootMotionSourceID;
+	TSharedPtr<FRootMotionSource_MoveToForce> _rootMotionSource;
+
+	EMovementMode _lastMode;
 };
+
+

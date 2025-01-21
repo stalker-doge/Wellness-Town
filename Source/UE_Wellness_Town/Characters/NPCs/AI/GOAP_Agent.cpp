@@ -3,7 +3,6 @@
 
 #include "GOAP_Agent.h"
 #include "UE_Wellness_Town/GameModes/WT_GameMode.h"
-#include "UE_Wellness_Town/Utility/TimeManager.h"
 #include "UE_Wellness_Town/Characters/NPCs/NPC_Base.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/GOAP_Belief.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/GOAP_Goal.h"
@@ -14,15 +13,13 @@
 #include "UE_Wellness_Town/Characters/NPCs/AI/GOAP_BeliefFactory.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/WanderStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/TalkStrategy.h"
-#include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/WorkStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/SleepStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/TravelToWorkStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/TravelToHomeStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/FishingWorkStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/BugCatcherWorkStrategy.h"
+#include "UE_Wellness_Town/Characters/NPCs/AI/Strategies/MarketWorkStrategy.h"
 #include "UE_Wellness_Town/Characters/NPCs/AI/WorkType.h"
-
-//#include "UE_Wellness_Town/Characters/NPCs/AI/Sensors/GOAP_NPCSensor.h"
 
 // Sets default values for this component's properties
 UGOAP_Agent::UGOAP_Agent()
@@ -30,24 +27,14 @@ UGOAP_Agent::UGOAP_Agent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	//_npcSensor = CreateDefaultSubobject<UGOAP_NPCSensor>(TEXT("NPC Sensor"));
-	//checkf(_npcSensor, TEXT("GOAP Agent missing NPC Sensor"));
 }
 
 void UGOAP_Agent::Init()
 {
 	_owner = Cast<ANPC_Base>(GetOwner());
-	checkf(_owner, TEXT("GOAP_Agent Owner Not Found"));
-
-	//_npcSensor->_sensor->SetupAttachment(_owner->GetRootComponent());
 }
 
-ANPC_Base* UGOAP_Agent::GetNPC()
-{
-	return _owner;
-}
-
+#pragma region "GOAP"
 void UGOAP_Agent::SetupBeliefs()
 {
 	UGOAP_BeliefFactory* factory = NewObject<UGOAP_BeliefFactory>();
@@ -75,7 +62,8 @@ void UGOAP_Agent::SetupActions()
 		_actions.Add(UGOAP_Action::Builder(TEXT("WORK")).WithStrategy(NewObject<UFishingWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).AddEffect(_beliefs.FindChecked(TEXT("WORKING"))).Build());
 		break;
 	case WorkType::Trading:
-		_actions.Add(UGOAP_Action::Builder(TEXT("WORK")).WithStrategy(NewObject<UWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).AddEffect(_beliefs.FindChecked(TEXT("WORKING"))).Build());
+		// Trader work not implemented, will just stand at stall during work hours.
+		_actions.Add(UGOAP_Action::Builder(TEXT("WORK")).WithStrategy(NewObject<UMarketWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).AddEffect(_beliefs.FindChecked(TEXT("WORKING"))).Build());
 		break;
 	case WorkType::BugCatching:
 		_actions.Add(UGOAP_Action::Builder(TEXT("WORK")).WithStrategy(NewObject<UBugCatcherWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).AddEffect(_beliefs.FindChecked(TEXT("WORKING"))).Build());
@@ -83,7 +71,7 @@ void UGOAP_Agent::SetupActions()
 	default:
 		break;
 	}
-	
+
 	_actions.Add(UGOAP_Action::Builder(TEXT("TRAVEL_TO_WORK")).WithStrategy(NewObject<UTravelToWorkStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("NEED_TO_WORK"))).AddEffect(_beliefs.FindChecked(TEXT("IS_AT_WORKPLACE"))).Build());
 
 	_actions.Add(UGOAP_Action::Builder(TEXT("SLEEP")).WithStrategy(NewObject<USleepStrategy>()).AddPrecondition(_beliefs.FindChecked(TEXT("IS_AT_HOME"))).AddEffect(_beliefs.FindChecked(TEXT("SLEEPING"))).Build());
@@ -97,60 +85,6 @@ void UGOAP_Agent::SetupGoals()
 	_goals.Add(UGOAP_Goal::Builder(TEXT("SLEEP")).WithPriority(5).AddDesiredEffect(_beliefs.FindChecked(TEXT("SLEEPING"))).Build());
 }
 
-AActor* UGOAP_Agent::GetHome()
-{
-	return _home;
-}
-
-void UGOAP_Agent::SetIsAtHome(bool val)
-{
-	_isAtHome = val;
-}
-
-bool UGOAP_Agent::IsAtHome()
-{
-	return _isAtHome;
-}
-
-AActor* UGOAP_Agent::GetWorkPlace()
-{
-	return _workPlace;
-}
-
-WorkType UGOAP_Agent::GetWorkType()
-{
-	return _workType;
-}
-
-void UGOAP_Agent::Reset()
-{
-	_goals.Empty();
-	_beliefs.Empty();
-	_actions.Empty();
-
-	_planner = nullptr;
-
-	SetupBeliefs();
-	SetupActions();
-	SetupGoals();
-
-	_planner = NewObject<UGOAP_Planner>();
-}
-void UGOAP_Agent::SetPauseAgent(bool val)
-{
-	if (_isPaused == val)
-	{
-		return;
-	}
-
-	_isPaused = val;
-
-	_owner->SetPauseMovement(_isPaused);
-}
-void UGOAP_Agent::TogglePauseAgent()
-{
-	SetPauseAgent(!_isPaused);
-}
 void UGOAP_Agent::CalculateActionPlan()
 {
 	int priorityLevel = (_currentGoal != nullptr) ? _currentGoal->_priority : 0;
@@ -174,72 +108,154 @@ void UGOAP_Agent::CalculateActionPlan()
 	}
 }
 
-void UGOAP_Agent::SetDestination(FVector destination)
+void UGOAP_Agent::Reset()
 {
-	_owner->SetDestination(destination);
-}
+	_goals.Empty();
+	_beliefs.Empty();
+	_actions.Empty();
 
-FVector UGOAP_Agent::GetCurrentDestination()
-{
-	return _owner->GetCurrentDestination();
-}
-
-FVector UGOAP_Agent::GetActorLocation()
-{
-	return _owner->GetActorLocation();
-}
-
-FVector UGOAP_Agent::GetForwardVector()
-{
-	return _owner->GetActorForwardVector();;
-}
-
-USkeletalMeshComponent* UGOAP_Agent::GetMesh()
-{
-	return _owner->GetMesh();
-}
-
-bool UGOAP_Agent::HasPath()
-{
-	return _owner->HasPath();
-}
-
-void UGOAP_Agent::SetIsAtWorkPlace(bool val)
-{
-	_isAtWorkPlace = val;
-}
-
-bool UGOAP_Agent::IsAtWorkPlace()
-{
-	return _isAtWorkPlace;
-}
-
-TSubclassOf<AFishingRod> UGOAP_Agent::GetFishingRodDefault()
-{
-	return _fishingRodDefault;
-}
-
-TSubclassOf<ABugNet> UGOAP_Agent::GetBugNetDefault()
-{
-	return _bugNetDefault;
-}
-
-// Called when the game starts
-void UGOAP_Agent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	_timeManager = Cast<AWT_GameMode>(GetWorld()->GetAuthGameMode())->GetTimeManager();
-	checkf(_timeManager, TEXT("No Time Manager"));
-
-	//_npcSensor->Init(150, this);
+	_planner = nullptr;
 
 	SetupBeliefs();
 	SetupActions();
 	SetupGoals();
 
 	_planner = NewObject<UGOAP_Planner>();
-	//_canTalk = true;
+}
+
+TMap<FString, TObjectPtr<UGOAP_Belief>> UGOAP_Agent::GetBeliefs() const
+{
+	return _beliefs;
+}
+
+TArray<TObjectPtr<UGOAP_Action>> UGOAP_Agent::GetActions() const
+{
+	return _actions;
+}
+
+TArray<TObjectPtr<UGOAP_Goal>> UGOAP_Agent::GetGoals() const
+{
+	return _goals;
+}
+#pragma endregion
+
+#pragma region "AI"
+void UGOAP_Agent::SetPauseAgent(bool val)
+{
+	if (_isPaused == val)
+	{
+		return;
+	}
+
+	_isPaused = val;
+
+	_owner->SetPauseMovement(_isPaused);
+}
+
+void UGOAP_Agent::TogglePauseAgent()
+{
+	SetPauseAgent(!_isPaused);
+}
+
+void UGOAP_Agent::SetDestination(FVector destination)
+{
+	_owner->SetDestination(destination);
+}
+
+AActor* UGOAP_Agent::GetHome() const
+{
+	return _home;
+}
+
+AActor* UGOAP_Agent::GetWorkPlace() const
+{
+	return _workPlace;
+}
+
+WorkType UGOAP_Agent::GetWorkType() const
+{
+	return _workType;
+}
+
+void UGOAP_Agent::SetIsAtHome(bool val)
+{
+	_isAtHome = val;
+}
+
+void UGOAP_Agent::SetIsAtWorkPlace(bool val)
+{
+	_isAtWorkPlace = val;
+}
+bool UGOAP_Agent::IsAtHome() const
+{
+	return _isAtHome;
+}
+bool UGOAP_Agent::IsAtWorkPlace() const
+{
+	return _isAtWorkPlace;
+}
+bool UGOAP_Agent::IsSleepHours() const
+{
+	return _isSleepHours;
+}
+bool UGOAP_Agent::IsWorkHours() const
+{
+	return _isWorkHours;
+}
+#pragma endregion
+
+#pragma region "Helpers"
+USkeletalMeshComponent* UGOAP_Agent::GetMesh()
+{
+	return _owner->GetMesh();
+}
+
+ANPC_Base* UGOAP_Agent::GetNPC()
+{
+	return _owner.Get();
+}
+
+FVector UGOAP_Agent::GetCurrentDestination() const
+{
+	return _owner->GetCurrentDestination();
+}
+
+FVector UGOAP_Agent::GetActorLocation() const
+{
+	return _owner->GetActorLocation();
+}
+
+FVector UGOAP_Agent::GetForwardVector() const
+{
+	return _owner->GetActorForwardVector();;
+}
+
+TSubclassOf<AFishingRod> UGOAP_Agent::GetFishingRodDefault() const
+{
+	return _fishingRodDefault;
+}
+
+TSubclassOf<ABugNet> UGOAP_Agent::GetBugNetDefault() const
+{
+	return _bugNetDefault;
+}
+
+bool UGOAP_Agent::HasPath() const
+{
+	return _owner->HasPath();
+}
+#pragma endregion
+
+// Called when the game starts
+void UGOAP_Agent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetupBeliefs();
+	SetupActions();
+	SetupGoals();
+
+	_planner = NewObject<UGOAP_Planner>();
 }
 
 
@@ -248,13 +264,20 @@ void UGOAP_Agent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	_timer += DeltaTime * 0.25f;
+
+	if (_timer >= 24)
+	{
+		_timer = 0;
+	}
+
 	if (_isPaused == true)
 	{
 		return;
 	}
 
-	_isWorkHours = (_timeManager->GetHours() >= 9 && _timeManager->GetHours() < 17);
-	_isSleepHours = (_timeManager->GetHours() >= 22 || _timeManager->GetHours() < 6);
+	_isWorkHours = (_timer >= 9 && _timer < 17);
+	_isSleepHours = (_timer >= 22 || _timer < 6);
 
 	if (_currentAction == nullptr)
 	{

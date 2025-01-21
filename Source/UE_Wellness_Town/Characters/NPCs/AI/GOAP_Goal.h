@@ -19,7 +19,7 @@ public:
 
 	class UE_WELLNESS_TOWN_API Builder
 	{
-		TObjectPtr<UGOAP_Goal> goal;
+		TWeakObjectPtr<UGOAP_Goal> goal;
 
 	public:
 		Builder(FString name)
@@ -39,7 +39,7 @@ public:
 		}
 		UGOAP_Goal* Build()
 		{
-			return goal;
+			return goal.Get();
 		}
 	};
 

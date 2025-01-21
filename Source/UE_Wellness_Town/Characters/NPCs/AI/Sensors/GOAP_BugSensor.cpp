@@ -46,7 +46,7 @@ void UGOAP_BugSensor::SetIsActive(bool val)
 
 ABug* UGOAP_BugSensor::GetClosestBug()
 {
-	return _closestBug;
+	return _closestBug.Get();
 }
 
 void UGOAP_BugSensor::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

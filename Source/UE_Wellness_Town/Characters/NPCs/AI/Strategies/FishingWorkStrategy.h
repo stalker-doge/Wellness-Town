@@ -28,10 +28,8 @@ private:
 	void CastRod();
 
 private:
-	UPROPERTY()
-	TObjectPtr<UGOAP_Agent> _agent;
-	UPROPERTY()
-	TObjectPtr<ANPC_Base> _npc;
+	TWeakObjectPtr<UGOAP_Agent> _agent;
+	TWeakObjectPtr<ANPC_Base> _npc;
 
 	UPROPERTY()
 	TObjectPtr<AFishingRod> _fishingRod;

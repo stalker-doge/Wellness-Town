@@ -11,7 +11,7 @@
 void UFishingWorkStrategy::Start(UGOAP_Agent* agent)
 {
     _agent = agent;
-    _npc = _agent->_owner;
+    _npc = _agent->GetNPC();
 
     if (_fishingRod == nullptr)
     {
@@ -62,7 +62,7 @@ void UFishingWorkStrategy::Stop()
 
 bool UFishingWorkStrategy::Complete()
 {
-	return (!_agent->_isWorkHours && _fishingRod->IsFishing() == false);
+	return (!_agent->IsWorkHours() && _fishingRod->IsFishing() == false);
 }
 
 void UFishingWorkStrategy::CreateSpline()

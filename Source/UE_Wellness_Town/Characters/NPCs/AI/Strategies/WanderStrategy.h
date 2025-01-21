@@ -25,8 +25,8 @@ public:
 	virtual bool Complete() override;
 
 private:
-	TObjectPtr<UGOAP_Agent> _agent;
-	TObjectPtr<UNavigationSystemV1> _navSystem;
+	TWeakObjectPtr<UGOAP_Agent> _agent;
+	TWeakObjectPtr<UNavigationSystemV1> _navSystem;
 
 	float _timer;
 	float _delayBetweenPathing;

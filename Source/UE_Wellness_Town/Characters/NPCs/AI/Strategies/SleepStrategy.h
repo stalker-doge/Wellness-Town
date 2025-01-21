@@ -24,5 +24,5 @@ private:
 	void ToggleSleep(bool isSleeping);
 
 private:
-	TObjectPtr<UGOAP_Agent> _agent;
+	TWeakObjectPtr<UGOAP_Agent> _agent;
 };

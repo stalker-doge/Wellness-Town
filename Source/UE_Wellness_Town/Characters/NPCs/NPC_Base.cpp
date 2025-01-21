@@ -38,16 +38,18 @@ ANPC_Base::ANPC_Base()
 	_niagara->SetupAttachment(GetMesh(), FName("NiagaraSocket"));
 }
 
-void ANPC_Base::UseItem(USplineComponent* path)
+void ANPC_Base::ToggleVisibility(bool isVisible)
 {
-	if (_heldObject == nullptr)
+	if (_heldObject != nullptr)
 	{
-		return;
+		_heldObject->GetStaticMesh()->ToggleVisibility(isVisible);
 	}
 
-	_heldObject->ItemCast(this, path, false);
+	GetMesh()->ToggleVisibility(isVisible);
+	_niagara->SetActive(isVisible);
 }
 
+#pragma region "AI"
 void ANPC_Base::SetDestination(FVector destination)
 {
 	_currentDestination = destination;
@@ -59,11 +61,6 @@ void ANPC_Base::SetDestination(FVector destination)
 	_controller->MoveTo(moveTo);
 }
 
-FVector ANPC_Base::GetCurrentDestination()
-{
-	return _currentDestination;
-}
-
 void ANPC_Base::SetPauseMovement(bool val)
 {
 	if (val == true)
@@ -73,11 +70,6 @@ void ANPC_Base::SetPauseMovement(bool val)
 	}
 
 	_controller->ResumeMove(FAIRequestID::CurrentRequest);
-}
-
-bool ANPC_Base::HasPath()
-{
-	return _controller->IsFollowingAPath();
 }
 
 void ANPC_Base::SetPauseAI(bool val)
@@ -98,11 +90,22 @@ void ANPC_Base::SetMood(Mood mood)
 	_niagara->SetAsset(_niagaraSystems[_mood]);
 	_niagara->Activate();
 }
+#pragma endregion
 
+#pragma region "ITEM"
+void ANPC_Base::UseItem(USplineComponent* path)
+{
+	if (_heldObject.IsValid() == false)
+	{
+		return;
+	}
+
+	_heldObject->ItemCast(this, path, false);
+}
 
 void ANPC_Base::PickUp(AItem* item)
 {
-	if (_heldObject != nullptr)
+	if (_heldObject.IsValid() == true)
 	{
 		DropItem();
 	}
@@ -120,7 +123,7 @@ void ANPC_Base::PickUp(AItem* item)
 
 void ANPC_Base::DropItem()
 {
-	if (_heldObject == nullptr)
+	if (_heldObject.IsValid() == false)
 	{
 		return;
 	}
@@ -129,62 +132,32 @@ void ANPC_Base::DropItem()
 	_heldObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	_heldObject = nullptr;
 }
+#pragma endregion
+
+#pragma region "HELPER"
+UNPC_Data* ANPC_Base::GetNPCData()
+{
+	return _data.Get();
+}
+
+FVector ANPC_Base::GetCurrentDestination() const
+{
+	return _currentDestination;
+}
 
 USplineComponent* ANPC_Base::GetSplineComponent()
 {
 	return _splineComponent;
 }
 
-UNPC_Data* ANPC_Base::GetNPCData()
+bool ANPC_Base::HasPath() const
 {
-	return _data.Get();
-}
-
-// Current dialogue was just to check for errors with NPC_Data access. Remove/change if needed for the full Dialogue implementation
-void ANPC_Base::Interact(APlayerCharacter* player)
-{
-	_agent->TogglePauseAgent();
-
-	/*if (_dialogueDefault == nullptr)
-	{
-		return;
-	}
-
-	if (_dialogueComponent == nullptr)
-	{
-		_dialogueComponent = Cast<UDialogueSystem>(AddComponentByClass(_dialogueDefault, false, GetTransform(), true));
-	}
-
-	_dialogueComponent->StartDialogue();*/
-	GEngine->AddOnScreenDebugMessage(4, 10, FColor::Green, FString::Printf(TEXT("Interacted With: %s"), *_data->GetNPCName()));
-}
-
-// Called when the game starts or when spawned
-void ANPC_Base::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	_controller = Cast<AAIController>(GetController());
-	_player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
-	_mood = _startingMood;
-	SetMood(_mood);
-}
-
-void ANPC_Base::ToggleVisibility(bool isVisible)
-{
-	if (_heldObject != nullptr)
-	{
-		_heldObject->GetStaticMesh()->ToggleVisibility(isVisible);
-	}
-
-	GetMesh()->ToggleVisibility(isVisible);
-	_niagara->SetActive(isVisible);
+	return _controller->IsFollowingAPath();
 }
 
 bool ANPC_Base::IsInPlayerRange()
 {
-	if (_player == nullptr)
+	if (_player.IsValid() == false)
 	{
 		return false;
 	}
@@ -208,6 +181,30 @@ bool ANPC_Base::IsInPlayerRange()
 
 	return true;
 }
+#pragma endregion
+
+void ANPC_Base::Interact(APlayerCharacter* player)
+{
+	if (_data->GetNPCName() == "Unknown")
+	{
+		_data->LearnName();
+	}
+
+	GEngine->AddOnScreenDebugMessage(4, 10, FColor::Green, FString::Printf(TEXT("Interacted With: %s"), *_data->GetNPCName()));
+}
+
+// Called when the game starts or when spawned
+void ANPC_Base::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	_controller = Cast<AAIController>(GetController());
+	_player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	_mood = _startingMood;
+	SetMood(_mood);
+}
+
 
 // Called every frame
 void ANPC_Base::Tick(float DeltaTime)

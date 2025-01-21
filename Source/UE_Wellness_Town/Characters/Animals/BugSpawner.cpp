@@ -21,6 +21,8 @@ void ABugSpawner::Remove(ABug* bug)
 	{
 		_spawnedBugs.Remove(bug);
 	}
+
+	_spawnCount -= 1;
 }
 
 // Called when the game starts or when spawned
@@ -34,7 +36,7 @@ void ABugSpawner::BeginPlay()
 
 bool ABugSpawner::CheckIfPlayerInRange()
 {
-	if (_player == nullptr)
+	if (_player.IsValid() == false)
 	{
 		return false;
 	}
@@ -54,19 +56,22 @@ void ABugSpawner::SpawnBug()
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	TObjectPtr<ABug> bug = GetWorld()->SpawnActor<ABug>(_bugDefault, GetActorLocation(), FRotator::ZeroRotator, spawnParams);
+	TWeakObjectPtr<ABug> bug = GetWorld()->SpawnActor<ABug>(_bugDefault, GetActorLocation(), FRotator::ZeroRotator, spawnParams);
 	_spawnedBugs.Add(bug);
 	bug->Init(this);
+
+	_spawnCount += 1;
 }
 
 void ABugSpawner::DespawnBugs()
 {
-	for (ABug* bug : _spawnedBugs)
+	for (TWeakObjectPtr<ABug> bug : _spawnedBugs)
 	{
 		bug->Destroy();
 	}
 
 	_spawnedBugs.Empty();
+	_spawnCount = 0;
 }
 
 // Called every frame
@@ -75,10 +80,6 @@ void ABugSpawner::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	_playerInRange = CheckIfPlayerInRange();
-
-	GEngine->AddOnScreenDebugMessage(13, 5, FColor::Yellow, FString::Printf(TEXT("PlayerInRange: %s"), _playerInRange? TEXT("TRUE") : TEXT("FALSE")));
-	GEngine->AddOnScreenDebugMessage(14, 5, FColor::Yellow, FString::Printf(TEXT("Timer: %f"), _timer));
-	GEngine->AddOnScreenDebugMessage(15, 5, FColor::Yellow, FString::Printf(TEXT("Despawn Timer: %f"), _despawnTimer));
 
 	if (_playerInRange == true)
 	{
@@ -95,8 +96,7 @@ void ABugSpawner::Tick(float DeltaTime)
 		}
 	}
 
-
-	if (_timer > _spawnDelay)
+	if (_timer > _spawnDelay && _spawnCount < _maxSpawnCount)
 	{
 		SpawnBug();
 		_timer = 0;

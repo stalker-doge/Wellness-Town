@@ -21,8 +21,8 @@ public:
 	bool IsDead();
 public:
 
-	TObjectPtr<UGOAP_Node> parent;
-	TObjectPtr<UGOAP_Action> action;
+	TWeakObjectPtr<UGOAP_Node> parent;
+	TWeakObjectPtr<UGOAP_Action> action;
 	TArray<TObjectPtr<UGOAP_Belief>> requiredEffects;
 	TArray<TObjectPtr<UGOAP_Node>> neighbours;
 	int cost;

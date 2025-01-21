@@ -63,7 +63,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Info")
 	TObjectPtr<UPaperSprite> _profileImage;
 
-	// Bool = isKnown
 	UPROPERTY(EditAnywhere, Category = "Info")
 	FString _name;
 	UPROPERTY(EditAnywhere, Category = "Info")

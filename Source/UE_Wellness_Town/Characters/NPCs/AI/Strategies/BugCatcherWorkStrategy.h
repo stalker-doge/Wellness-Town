@@ -27,12 +27,10 @@ public:
 
 	virtual bool Complete() override;
 private:
-	UPROPERTY()
-	TObjectPtr<UGOAP_Agent> _agent;
-	UPROPERTY()
-	TObjectPtr<ANPC_Base> _npc;
-	UPROPERTY()
-	TObjectPtr<ABug> _target;
+	TWeakObjectPtr<UGOAP_Agent> _agent;
+	TWeakObjectPtr<ANPC_Base> _npc;
+	TWeakObjectPtr<ABug> _target;
+
 	UPROPERTY()
 	TObjectPtr<UGOAP_BugSensor> _sensor;
 
